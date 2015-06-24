@@ -10,7 +10,7 @@ import android.content.Intent;
 
 public class SplashActivity extends Activity {
 
-	private static int SPLASH_TIME_OUT = 8000;
+	private static int SPLASH_TIME_OUT = 3000;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
