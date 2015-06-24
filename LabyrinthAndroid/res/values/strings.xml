@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">The Maze</string>
+    <string name="action_settings">Settings</string>
+    <string name="welcome_message"> Welcome to THE MAZE</string>
+    <string name="author">By Ahtsho and Feffi</string>
+    <string name="move_instructions">Tap N:north, S:south, W:west, E:east</string>
+	<string name="game_status_instructions">Tap Y to start the game, Tap Q to quit the game</string>
+</resources>
