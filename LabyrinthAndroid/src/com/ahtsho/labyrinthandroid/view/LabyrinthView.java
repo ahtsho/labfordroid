@@ -2,8 +2,8 @@ package com.ahtsho.labyrinthandroid.view;
 
 import java.util.ArrayList;
 
-import com.ahtsho.labyrinthandroid.core.Cell;
-
+import core.Cell;
+import core.Labyrinth;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -14,7 +14,7 @@ import android.view.View;
 
 public class LabyrinthView extends View {
 
-	private ArrayList<Cell> labyrinth;
+	private Labyrinth labyrinth;
 	private Paint paint;
 	private Paint paintOpen;
 
@@ -28,9 +28,9 @@ public class LabyrinthView extends View {
 		super.onDraw(canvas);
 		
 		canvas.drawColor(Color.BLACK);
-		
-		for(Cell cell: labyrinth){
-			drawCell(canvas, cell);
+		ArrayList<Cell> cells = labyrinth.getCells();
+		for(int i = 0; i < cells.size(); i++){
+			drawCell(canvas, cells.get(i));
 //			canvas.drawRect(cell, paint);
 		}
 	}
@@ -82,7 +82,7 @@ public class LabyrinthView extends View {
 		}
 	}
 
-	public LabyrinthView(Context context, Paint aPaint,Paint anotherPaint, ArrayList<Cell> aLab) {
+	public LabyrinthView(Context context, Paint aPaint,Paint anotherPaint, Labyrinth aLab) {
 		super(context);
 		paint = aPaint;
 		paintOpen = anotherPaint;
