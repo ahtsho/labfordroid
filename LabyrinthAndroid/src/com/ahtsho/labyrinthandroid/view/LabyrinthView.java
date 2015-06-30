@@ -80,6 +80,9 @@ public class LabyrinthView extends View {
 					(cell.getCol()+1)*CELL_WIDTH,
 					(cell.getRow()+1)*CELL_HEIGHT, paintOpen);
 		}
+		if(labyrinth.getPlayer().getPosition().equals(cell)){
+			canvas.drawCircle(cell.getCol()*CELL_WIDTH +CELL_WIDTH/2, cell.getRow()*CELL_HEIGHT+CELL_HEIGHT/2,CELL_WIDTH*3/8 , paint);
+		}
 	}
 
 	public LabyrinthView(Context context, Paint aPaint,Paint anotherPaint, Labyrinth aLab) {
