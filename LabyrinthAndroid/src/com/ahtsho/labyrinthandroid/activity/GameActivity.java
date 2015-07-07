@@ -36,6 +36,11 @@ public class GameActivity extends Activity {
 		paintBroken.setPathEffect(new DashPathEffect(new float[] { 20, 20 }, 0));
 		paintBroken.setStyle(Paint.Style.FILL_AND_STROKE);
 
+		Paint playerPaint = new Paint();
+		playerPaint.setColor(Color.YELLOW);
+		playerPaint.setStrokeWidth(10);
+		playerPaint.setStyle(Paint.Style.FILL);
+		
 		Player p = new Player();
 		p.setName("F");
 
@@ -49,6 +54,6 @@ public class GameActivity extends Activity {
 			e.printStackTrace();
 		}
 		
-		setContentView(new LabyrinthView(this, paint, paintBroken, lab));
+		setContentView(new LabyrinthView(this, paint, paintBroken,playerPaint, lab));
 	}
 }
