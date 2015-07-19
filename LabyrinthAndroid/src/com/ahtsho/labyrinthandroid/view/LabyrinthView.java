@@ -10,26 +10,29 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 public class LabyrinthView extends View {
-
+private String LOG_TAG = "LabyrinthView";
 	private Labyrinth labyrinth;
 	private Paint paint;
 	private Paint paintOpen;
 	private Paint playerPaint;
+	private Paint textPaint;
 	private int level = 1;
 	private float screenWidth = 0;
 	private float screenHeight = 0;
 	private static int CELL_WIDTH = 200;
 	private static int CELL_HEIGHT = 200;
-	private static int LEFT_PADDING = 50;
-	private static int TOP_PADDING = 100;
+	private static int MARGIN = 50;
+	
 	private boolean touched = false;
 
 	private boolean startingFromPlayerCell = false;
@@ -38,102 +41,89 @@ public class LabyrinthView extends View {
 	private float xup = 0;
 	private float yup = 0;
 
-	private float x = 0;
-	private int countx = 0;
-	private float y = 0;
-	private int county = 0;
+//	private float countDraw=0;
 	private boolean sameLevel = true;
 
 	private float xOffset = 0;
 	private float yOffset = 0;
-	
+
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-		
-		float playerX = getXFromCell(labyrinth.getPlayer().getPosition(), 0);
-		float playerY = getYFromCell(labyrinth.getPlayer().getPosition(), 0);
-		
 		canvas.drawColor(Color.BLACK);
 		ArrayList<Cell> cells = labyrinth.getCells();
 		for (int i = 0; i < cells.size(); i++) {
-			if (playerX+CELL_WIDTH/2 > screenWidth) {
-//				Log.d("DEBUG", "player x position =" + playerX + " screen w="
-//						+ screenWidth + "--- shift left "
-//						+ (playerX - screenWidth));
-				xOffset =  (playerX +CELL_WIDTH/2 )- screenWidth;
-				yOffset = 0;
-				drawCell(canvas, cells.get(i),xOffset, yOffset);
-			}
-			if (playerY+CELL_HEIGHT/2 > screenHeight) {
-//				Log.d("DEBUG", "player y position =" + playerY + " screen h="
-//						+ screenHeight + "--- shift up "
-//						+ (playerY - screenHeight));
-				xOffset = 0;
-				yOffset = (playerY+CELL_HEIGHT/2 )- screenHeight;
-				drawCell(canvas, cells.get(i), xOffset, yOffset);
-			}
-			if (playerX - CELL_WIDTH/2 < 0) {
-//				Log.d("DEBUG", "player x position =" + playerX + " screen w="
-//						+ screenWidth + "--- shift right " + (-playerX));
-				xOffset = -(CELL_WIDTH/2-playerX);
-				yOffset = 0;
-				drawCell(canvas, cells.get(i), xOffset, yOffset);
-			}
-			if (playerY -CELL_HEIGHT/2<0) {
-//				Log.d("DEBUG", "player y position =" + playerY + " screen h="
-//						+ screenHeight + "--- shift down " + (-playerY));
-				xOffset =0;
-				yOffset = -(CELL_HEIGHT/2-playerY);
-				drawCell(canvas, cells.get(i), xOffset, yOffset);
-			}
-
-			if (playerX-CELL_WIDTH/2 >=0  
-					&& playerX+CELL_WIDTH/2 <= screenWidth 
-					&& playerY-CELL_HEIGHT/2 >=0 
-					&& playerY+CELL_HEIGHT/2 <= screenHeight) {
-//				Log.d("DEBUG", "player on screen");
-				drawCell(canvas, cells.get(i), 0, 0);
-			}
-			// canvas.drawRect(cell, paint);
+			shiftPlayerOnScreen();
+			drawCell(canvas, cells.get(i), xOffset, yOffset, true);
 		}
-
+//		countDraw++;
 		invalidate();
 
 	}
 
-	private void drawCell(Canvas canvas, Cell cell, float xOffset, float yOffset) {
-		if (cell.isWest()) {
-			canvas.drawLine(getXFromCell(cell, xOffset),
-					getYFromCell(cell, yOffset), getXFromCell(cell, xOffset),
-					getYFormNextCell(cell, yOffset), paint);// west
-		} else {
-			canvas.drawLine(getXFromCell(cell, xOffset),
-					getYFromCell(cell, yOffset), getXFromCell(cell, xOffset),
-					getYFormNextCell(cell, yOffset), paintOpen);
+	private void shiftPlayerOnScreen() {
+		float playerX = getXOfCellCenter(labyrinth.getPlayer().getPosition(), 0);
+		float playerY = getYOfCellCenter(labyrinth.getPlayer().getPosition(), 0);
+		String caso="";
+		if (playerX + CELL_WIDTH / 2 > screenWidth) {
+			xOffset = (playerX + CELL_WIDTH / 2) - screenWidth;
+			yOffset = 0;
+			caso="E";
 		}
-		if (cell.isNorth()) {
-			canvas.drawLine(getXFromCell(cell, xOffset),
-					getYFromCell(cell, yOffset),
-					getXFromNextCell(cell, xOffset),
-					getYFromCell(cell, yOffset), paint);// north
-		} else {
-			canvas.drawLine(getXFromCell(cell, xOffset),
-					getYFromCell(cell, yOffset),
-					getXFromNextCell(cell, xOffset),
-					getYFromCell(cell, yOffset), paintOpen);
+		if (playerY + CELL_HEIGHT / 2 > screenHeight) {
+			xOffset = 0;
+			yOffset = (playerY + CELL_HEIGHT / 2) - screenHeight;
+			caso="S";
 		}
-		if (cell.isSouth()) {
-			canvas.drawLine(getXFromCell(cell, xOffset),
-					getYFormNextCell(cell, yOffset),
-					getXFromNextCell(cell, xOffset),
-					getYFormNextCell(cell, yOffset), paint);// south
-		} else {
-			canvas.drawLine(getXFromCell(cell, xOffset),
-					getYFormNextCell(cell, yOffset),
-					getXFromNextCell(cell, xOffset),
-					getYFormNextCell(cell, yOffset), paintOpen);
+		if (playerX - CELL_WIDTH / 2 < 0) {
+			xOffset = - (playerX-CELL_WIDTH / 2);
+			yOffset = 0;
+			caso="C";
 		}
+		if (playerY - CELL_HEIGHT / 2 < 0) {
+			xOffset = 0;
+			yOffset = -(playerY-CELL_HEIGHT / 2);
+			caso="D";
+		}
+
+		if (playerX - CELL_WIDTH / 2 >= 0
+				&& playerX + CELL_WIDTH / 2 <= screenWidth
+				&& playerY - CELL_HEIGHT / 2 >= 0
+				&& playerY + CELL_HEIGHT / 2 <= screenHeight) {
+			xOffset = 0;
+			yOffset = 0;
+			caso ="E";
+		}
+		Log.d(LOG_TAG, "playerX="+playerX+", playerY"+playerY+", screenHeight="+screenHeight+", yOffset="+yOffset+", case="+caso);
+	}
+
+	private void drawCell(Canvas canvas, Cell cell, float xOffset,
+			float yOffset, boolean showCoords) {
+		drawWestWall(canvas, cell, xOffset, yOffset, showCoords);
+		drawNorthWall(canvas, cell, xOffset, yOffset, showCoords);
+		drawSouthWall(canvas, cell, xOffset, yOffset, showCoords);
+		drawEastWall(canvas, cell, xOffset, yOffset, showCoords);
+
+		if (labyrinth.getPlayer().getPosition().equals(cell)) {
+			canvas.drawCircle(getXOfCellCenter(cell, xOffset),
+					getYOfCellCenter(cell, yOffset), getRadiusOfCircle(),
+					playerPaint);
+			if (showCoords) {
+				canvas.drawText(getXOfCellCenter(cell, xOffset) + ", "
+						+ getYOfCellCenter(cell, yOffset),
+						getXOfCellCenter(cell, 70+xOffset),
+						getYOfCellCenter(cell, -35+yOffset), textPaint);
+			}
+		}
+		canvas.drawText("[" + cell.getRow() + "," + cell.getCol() + "]",
+				getXOfCellCenter(cell, 25+xOffset), getYOfCellCenter(cell, -5+yOffset),
+				textPaint);
+//		canvas.drawText("sw="+screenWidth+",sh="+screenHeight, screenWidth/3, 1000, textPaint);
+
+	}
+
+	private void drawEastWall(Canvas canvas, Cell cell, float xOffset,
+			float yOffset, boolean showCoords) {
 		if (cell.isEast()) {
 			canvas.drawLine(getXFromNextCell(cell, xOffset),
 					getYFromCell(cell, yOffset),
@@ -145,11 +135,72 @@ public class LabyrinthView extends View {
 					getXFromNextCell(cell, xOffset),
 					getYFormNextCell(cell, yOffset), paintOpen);
 		}
-		if (labyrinth.getPlayer().getPosition().equals(cell)) {
-			Log.d("DEBUG","player should be in ["+getXFromCell(cell, xOffset)+", "+getYFromCell(cell,yOffset)+"]   Drawing player=["+getXOfCellCenter(cell, xOffset)+","+getYOfCellCenter(cell, yOffset)+"]");
-			canvas.drawCircle(getXOfCellCenter(cell, xOffset),
-					getYOfCellCenter(cell, yOffset), getRadiusOfCircle(),
-					playerPaint);
+		if (showCoords) {
+		}
+	}
+
+	private void drawSouthWall(Canvas canvas, Cell cell, float xOffset,
+			float yOffset, boolean showCoords) {
+		if (cell.isSouth()) {
+			canvas.drawLine(getXFromCell(cell, xOffset),
+					getYFormNextCell(cell, yOffset),
+					getXFromNextCell(cell, xOffset),
+					getYFormNextCell(cell, yOffset), paint);// south
+		} else {
+			canvas.drawLine(getXFromCell(cell, xOffset),
+					getYFormNextCell(cell, yOffset),
+					getXFromNextCell(cell, xOffset),
+					getYFormNextCell(cell, yOffset), paintOpen);
+		}
+		if (showCoords) {
+		}
+	}
+
+	private void drawNorthWall(Canvas canvas, Cell cell, float xOffset,
+			float yOffset, boolean showCoords) {
+		if (cell.isNorth()) {
+			canvas.drawLine(getXFromCell(cell, xOffset),
+					getYFromCell(cell, yOffset),
+					getXFromNextCell(cell, xOffset),
+					getYFromCell(cell, yOffset), paint);// north
+		} else {
+			canvas.drawLine(getXFromCell(cell, xOffset),
+					getYFromCell(cell, yOffset),
+					getXFromNextCell(cell, xOffset),
+					getYFromCell(cell, yOffset), paintOpen);
+		}
+		if (showCoords) {
+			// canvas.drawText("N(" + getXFromCell(cell, xOffset) + ","
+			// + getYFromCell(cell, yOffset) + ")",
+			// getXFromCell(cell, -10), getYFromCell(cell, -30),
+			// textPaint);
+			// canvas.drawText("(" + getXFromCell(cell, xOffset) + ","
+			// + getYFormNextCell(cell, yOffset) + ")",
+			// getXFromCell(cell, -10), getYFormNextCell(cell, 20),
+			// textPaint);
+		}
+	}
+
+	private void drawWestWall(Canvas canvas, Cell cell, float xOffset,
+			float yOffset, boolean showCoords) {
+		if (cell.isWest()) {
+			canvas.drawLine(getXFromCell(cell, xOffset),
+					getYFromCell(cell, yOffset), getXFromCell(cell, xOffset),
+					getYFormNextCell(cell, yOffset), paint);
+
+		} else {
+			canvas.drawLine(getXFromCell(cell, xOffset),
+					getYFromCell(cell, yOffset), getXFromCell(cell, xOffset),
+					getYFormNextCell(cell, yOffset), paintOpen);
+		}
+		if (showCoords) {
+			canvas.drawText("W(" + getXFromCell(cell, xOffset) + ","
+					+ getYFromCell(cell, yOffset) + ")",
+					getXFromCell(cell, -10+xOffset), getYFromCell(cell, -30+yOffset), textPaint);
+			canvas.drawText("(" + getXFromCell(cell, xOffset) + ","
+					+ getYFormNextCell(cell, yOffset) + ")",
+					getXFromCell(cell, -10+xOffset), getYFormNextCell(cell, 20+yOffset),
+					textPaint);
 		}
 	}
 
@@ -182,18 +233,24 @@ public class LabyrinthView extends View {
 	}
 
 	public LabyrinthView(Context context, Paint aPaint, Paint anotherPaint,
-			Paint aPlayerPaint, Labyrinth aLab) {
+			Paint aPlayerPaint, Paint aTextPaint, Labyrinth aLab) {
 		super(context);
 		paint = aPaint;
 		paintOpen = anotherPaint;
 		playerPaint = aPlayerPaint;
 		labyrinth = aLab;
-
+		textPaint = aTextPaint;
+		DisplayMetrics displaymetrics = new DisplayMetrics();
 		WindowManager wm = (WindowManager) context
 				.getSystemService(Context.WINDOW_SERVICE);
-		Display display = wm.getDefaultDisplay();
-		screenWidth = display.getWidth();
-		screenHeight = display.getHeight();
+		wm.getDefaultDisplay().getMetrics(displaymetrics);
+		screenHeight = displaymetrics.heightPixels;
+		screenWidth = displaymetrics.widthPixels;
+		// WindowManager wm = (WindowManager) context
+		// .getSystemService(Context.WINDOW_SERVICE);
+		// Display display = wm.getDefaultDisplay();
+		// screenWidth = display.getWidth();
+		// screenHeight = display.getHeight();
 		Log.d("DEBUG", "windowWidth=" + screenWidth);
 		Log.d("DEBUG", "windowHeight=" + screenHeight);
 	}
@@ -229,17 +286,17 @@ public class LabyrinthView extends View {
 			startingFromPlayerCell = false;
 			return false;
 		}
-		if (event.getAction() == MotionEvent.ACTION_MOVE) {
-			x = x + event.getX();
-			y = y + event.getY();
-			countx++;
-			county++;
-
-			// Log.d("DEBUG", "Move:x=" + event.getX() + ", x media="
-			// + (x / countx) + ",y=" + event.getY() + ", y media ="
-			// + (y / county));
-			return true;
-		}
+//		if (event.getAction() == MotionEvent.ACTION_MOVE) {
+//			x = x + event.getX();
+//			y = y + event.getY();
+//			countx++;
+//			county++;
+//
+//			// Log.d("DEBUG", "Move:x=" + event.getX() + ", x media="
+//			// + (x / countx) + ",y=" + event.getY() + ", y media ="
+//			// + (y / county));
+//			return true;
+//		}
 
 		if (event.getAction() == MotionEvent.ACTION_UP) {
 			// Log.d("DEBUG", "Up: x=" + event.getX() + ", y=" + event.getY());
@@ -251,6 +308,9 @@ public class LabyrinthView extends View {
 							getDirectionFromPosition(xdown, ydown, xup, yup));
 					if (!sameLevel) {
 						level = Levels.next(level);
+						CharSequence msg = "LEVEL "+level;
+						Toast toast = Toast.makeText(this.getContext(),msg , Toast.LENGTH_LONG);
+						toast.show();
 						labyrinth = Levels.genLabyrinth(level + 2,
 								labyrinth.getPlayer());
 						// // this.setVisibility(INVISIBLE);

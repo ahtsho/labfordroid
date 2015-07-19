@@ -33,6 +33,7 @@ public class GameActivity extends Activity {
 	Paint paint = new Paint();
 	Paint paintBroken = new Paint();
 	Paint playerPaint = new Paint();
+	Paint textPaint = new Paint();
 	Game game = new Game(false, false, false);
 	Player p = new Player();
 
@@ -47,14 +48,18 @@ public class GameActivity extends Activity {
 
 		paintBroken.setColor(Color.GRAY);
 		paintBroken.setStrokeWidth(3);
-		paintBroken
-				.setPathEffect(new DashPathEffect(new float[] { 20, 20 }, 0));
+//		paintBroken
+//				.setPathEffect(new DashPathEffect(new float[] { 20, 20 }, 0));
 		paintBroken.setStyle(Paint.Style.FILL_AND_STROKE);
 
 		playerPaint.setColor(Color.YELLOW);
 		playerPaint.setStrokeWidth(10);
 		playerPaint.setStyle(Paint.Style.FILL);
 
+		textPaint.setColor(Color.RED);
+		textPaint.setTextSize(25);
+		textPaint.setStyle(Paint.Style.STROKE);
+		
 		p.setName("F");
 
 		// while (!Levels.isLast(level)) {
@@ -70,7 +75,7 @@ public class GameActivity extends Activity {
 		// Levels.levelChanged = false;
 		// Console.printLevel(level);
 		View labView = new LabyrinthView(gameActivity, paint, paintBroken,
-				playerPaint, lab);
+				playerPaint, textPaint,lab);
 		setContentView(labView);
 
 		// console.printMoveMsg();
