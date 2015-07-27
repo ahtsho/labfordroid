@@ -46,11 +46,14 @@ public class LabyrinthView extends View {
 	private float yOffset = 0;
 	private float xAnimiate =0;
 	private float yAnimiate =0;
+	private float rAnimiate =0;
 	
 	private Texture texture=null;
 	private ArrayList<Texture> textures = new ArrayList<Texture>();
 	int landscape = 0;
 	boolean animate = false;
+//	boolean animationEnded = false;
+
 	public LabyrinthView(Context context, Paint aPaint, Paint anotherPaint,
 			Paint aPlayerPaint, Paint aTextPaint, Labyrinth aLab) {
 		super(context);
@@ -88,10 +91,20 @@ public class LabyrinthView extends View {
 			drawCell(canvas, cells.get(i), xOffset, yOffset, false);
 			if(animate){
 				xAnimiate ++;
-				if(xAnimiate >= 100){
+				yAnimiate ++;
+				rAnimiate--;
+				
+				if(xAnimiate >= 600){
 					animate = false;
 					xAnimiate = 0;
 					yAnimiate = 0;
+					rAnimiate = 0;
+					try {
+						goToNextLevel();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
 				}
 			}
 		}
@@ -142,7 +155,7 @@ public class LabyrinthView extends View {
 
 		if (labyrinth.getPlayer().getPosition().equals(cell)) {
 			canvas.drawCircle(getXOfCellCenter(cell, xOffset)+xAnimiate,
-					getYOfCellCenter(cell, yOffset)+yAnimiate, getRadiusOfCircle(),
+					getYOfCellCenter(cell, yOffset)+yAnimiate, getRadiusOfCircle()+rAnimiate,
 					playerPaint);
 			if (showCoords) {
 				canvas.drawText(getXOfCellCenter(cell, xOffset) + ", "
@@ -336,7 +349,6 @@ public class LabyrinthView extends View {
 		return cell.getCol() * CELL_WIDTH - offset;
 	}
 
-	boolean animationEnded = false;
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
@@ -359,30 +371,10 @@ public class LabyrinthView extends View {
 			if (startingFromPlayerCell) {
 				try {
 					Cell playerPosition = labyrinth.getPlayer().getPosition();
-					sameLevel = labyrinth.move(labyrinth.getPlayer(),
-							getDirectionFromPosition(xdown, ydown, xup, yup));
+					char exitDirection = getDirectionFromPosition(xdown, ydown, xup, yup);
+					sameLevel = labyrinth.move(labyrinth.getPlayer(),exitDirection);
 					if (!sameLevel) {		
 						animate = true;
-						
-						yAnimiate =0;
-						xAnimiate =0;
-						level = Levels.next(level);
-						CharSequence msg = "LEVEL " + level;
-						Toast toast = Toast.makeText(this.getContext(), msg,
-								Toast.LENGTH_LONG);
-						toast.show();
-						Log.d(LOG_TAG, "level="+level+" landscape="+landscape);
-						
-						if(level%2==0){
-							
-							texture = textures.get(landscape++%2);
-							texture.setImgs(BitmapFactory.decodeResource(getResources(),texture.getHorizontal()), 
-									BitmapFactory.decodeResource(getResources(),texture.getVertical()),
-									BitmapFactory.decodeResource(getResources(),texture.getFloor()));
-						}
-						
-						labyrinth = Levels.genLabyrinth(level + 2,
-								labyrinth.getPlayer());
 						
 						
 					}else{
@@ -401,6 +393,24 @@ public class LabyrinthView extends View {
 			return false;
 		}
 		return false;
+	}
+
+	private void goToNextLevel() throws Exception {
+		level = Levels.next(level);
+		CharSequence msg = "LEVEL " + level;
+		Toast toast = Toast.makeText(this.getContext(), msg,Toast.LENGTH_LONG);
+		toast.show();
+		
+//		Log.d(LOG_TAG, "level="+level+" landscape="+landscape);
+		
+		if(level%2==0){	
+			texture = textures.get(landscape++%2);
+			texture.setImgs(BitmapFactory.decodeResource(getResources(),texture.getHorizontal()), 
+					BitmapFactory.decodeResource(getResources(),texture.getVertical()),
+					BitmapFactory.decodeResource(getResources(),texture.getFloor()));
+		}
+		
+		labyrinth = Levels.genLabyrinth(level + 2,labyrinth.getPlayer());
 	}
 
 	private char getDirectionFromPosition(float x0, float y0, float xf, float yf) {
