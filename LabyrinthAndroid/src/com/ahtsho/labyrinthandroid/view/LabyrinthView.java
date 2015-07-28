@@ -23,6 +23,10 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 public class LabyrinthView extends View {
+	private static final int WALL_THICKNESS_BOTTOM = 25;
+	private static final int WALL_THICKNESS_RIGHT = 25;
+	private static final int WALL_THICKNESS_TOP = 25;
+	private static final int WALL_THICKNESS_LEFT = 25;
 	private String LOG_TAG = "LabyrinthView";
 	private Labyrinth labyrinth;
 	private Paint paint;
@@ -76,9 +80,9 @@ public class LabyrinthView extends View {
 //		texture = BitmapFactory.decodeResource(getResources(), R.drawable.hedge);
 	}
 
-	private void setTestures(){	
-		textures.add(new Texture(R.drawable.hedge_h,R.drawable.hedge_v, R.drawable.grass_2));
-		textures.add(new Texture(R.drawable.brick_h,R.drawable.brick_v, R.drawable.ciottoli));
+	private void setTestures(){
+		textures.add(new Texture(R.drawable.hedge_h,R.drawable.hedge_v, R.drawable.grass_9));
+//		textures.add(new Texture(R.drawable.brick_h,R.drawable.brick_v, R.drawable.ciottoli));
 	}	
 
 	@Override
@@ -183,10 +187,10 @@ public class LabyrinthView extends View {
 	private void drawBitmapEastWall(Canvas canvas, Cell cell, float xOffset,
 			float yOffset, boolean showCoords) {
 		if (cell.isEast()) {
-			Rect dst = new Rect((int)getXFromNextCell(cell, xOffset)-20,
-					(int) getYFromCell(cell, yOffset)-20, 
-					(int)getXFromNextCell(cell, xOffset)+20,
-					(int) getYFormNextCell(cell, yOffset)+20);
+			Rect dst = new Rect((int)getXFromNextCell(cell, xOffset)-WALL_THICKNESS_LEFT,
+					(int) getYFromCell(cell, yOffset)-WALL_THICKNESS_TOP, 
+					(int)getXFromNextCell(cell, xOffset)+WALL_THICKNESS_RIGHT,
+					(int) getYFormNextCell(cell, yOffset)+WALL_THICKNESS_BOTTOM);
 			
 			canvas.drawBitmap(texture.getVBitmap(), null, dst, paint);
 		} 
@@ -214,10 +218,10 @@ public class LabyrinthView extends View {
 	private void drawBitmapSouthWall(Canvas canvas, Cell cell, float xOffset,
 			float yOffset, boolean showCoords) {
 		if (cell.isSouth()) {
-			Rect dst = new Rect((int)getXFromCell(cell, xOffset)-20,
-					(int) getYFormNextCell(cell, yOffset)-20, 
-					(int) getXFromNextCell(cell, xOffset)+20,
-					(int) getYFormNextCell(cell, yOffset)+20);
+			Rect dst = new Rect((int)getXFromCell(cell, xOffset)-WALL_THICKNESS_LEFT,
+					(int) getYFormNextCell(cell, yOffset)-WALL_THICKNESS_TOP, 
+					(int) getXFromNextCell(cell, xOffset)+WALL_THICKNESS_RIGHT,
+					(int) getYFormNextCell(cell, yOffset)+WALL_THICKNESS_BOTTOM);
 			
 			canvas.drawBitmap(texture.getHBitmap(), null, dst, paint);
 			
@@ -246,10 +250,10 @@ public class LabyrinthView extends View {
 	private void drawBitmapNorthWall(Canvas canvas, Cell cell, float xOffset, float yOffset, boolean showCoords) {
 		if (cell.isNorth()) {
 			Rect dst = new Rect(
-					(int)getXFromCell(cell, xOffset)-20,
-					(int) getYFromCell(cell, yOffset)-20, 
-					(int)getXFromNextCell(cell, xOffset)+20,
-					(int) getYFromCell(cell, yOffset)+20);
+					(int)getXFromCell(cell, xOffset)-WALL_THICKNESS_LEFT,
+					(int) getYFromCell(cell, yOffset)-WALL_THICKNESS_TOP, 
+					(int)getXFromNextCell(cell, xOffset)+WALL_THICKNESS_RIGHT,
+					(int) getYFromCell(cell, yOffset)+WALL_THICKNESS_BOTTOM);
 			canvas.drawBitmap(texture.getHBitmap(), null, dst, paint);
 		}
 		if (showCoords) {
@@ -278,10 +282,10 @@ public class LabyrinthView extends View {
 		if (cell.isWest()) {
 			
 			Rect dst = new Rect(
-					(int)getXFromCell(cell, xOffset)-20,
-					(int) getYFromCell(cell, yOffset)-20, 
-					(int)getXFromCell(cell, xOffset)+20,
-					(int) getYFormNextCell(cell, yOffset)+20);
+					(int)getXFromCell(cell, xOffset)-WALL_THICKNESS_LEFT,
+					(int) getYFromCell(cell, yOffset)-WALL_THICKNESS_TOP, 
+					(int)getXFromCell(cell, xOffset)+WALL_THICKNESS_RIGHT,
+					(int) getYFormNextCell(cell, yOffset)+WALL_THICKNESS_BOTTOM);
 			
 			canvas.drawBitmap(texture.getVBitmap(), null, dst, paint);
 		} 
@@ -403,12 +407,12 @@ public class LabyrinthView extends View {
 		
 //		Log.d(LOG_TAG, "level="+level+" landscape="+landscape);
 		
-		if(level%2==0){	
-			texture = textures.get(landscape++%2);
+//		if(level%2==0){	
+			texture = textures.get(landscape++);
 			texture.setImgs(BitmapFactory.decodeResource(getResources(),texture.getHorizontal()), 
 					BitmapFactory.decodeResource(getResources(),texture.getVertical()),
 					BitmapFactory.decodeResource(getResources(),texture.getFloor()));
-		}
+//		}
 		
 		labyrinth = Levels.genLabyrinth(level + 2,labyrinth.getPlayer());
 	}
