@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.ahtsho.labyrinthandroid.activity.SplashActivity"
-            android:label="@string/app_name" 
+            android:label="@string/app_name"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,8 +26,13 @@
         <!-- Main activity -->
         <activity
             android:name="com.ahtsho.labyrinthandroid.activity.GameActivity"
-            android:label="@string/app_name" 
+            android:label="@string/app_name"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
+        </activity>
+        <activity
+            android:name="com.ahtsho.labyrinthandroid.activity.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"> >
         </activity>
     </application>
 

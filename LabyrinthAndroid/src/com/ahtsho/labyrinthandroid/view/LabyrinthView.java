@@ -7,7 +7,6 @@ import com.ahtsho.labyrinthandroid.R;
 import core.Cell;
 import core.Labyrinth;
 import core.Levels;
-import core.Player;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,7 +26,6 @@ public class LabyrinthView extends View {
 	private static final int WALL_THICKNESS_RIGHT = 25;
 	private static final int WALL_THICKNESS_TOP = 25;
 	private static final int WALL_THICKNESS_LEFT = 25;
-	private String LOG_TAG = "LabyrinthView";
 	private Labyrinth labyrinth;
 	private Paint paint;
 	private Paint paintOpen;
@@ -38,7 +36,6 @@ public class LabyrinthView extends View {
 	private float screenHeight = 0;
 	private  float CELL_WIDTH = 300;// make di
 	private  float CELL_HEIGHT = 300;
-	private static int MARGIN = 50;
 
 	private boolean startingFromPlayerCell = false;
 	private float xdown = 0;
@@ -57,9 +54,10 @@ public class LabyrinthView extends View {
 	int landscape = 0;
 	boolean animate = false;
 //	boolean animationEnded = false;
+	Bitmap playerBitmap = null;
 
 	public LabyrinthView(Context context, Paint aPaint, Paint anotherPaint,
-			Paint aPlayerPaint, Paint aTextPaint, Labyrinth aLab) {
+			Paint aPlayerPaint, Paint aTextPaint, Integer playerRes, Labyrinth aLab) {
 		super(context);
 		paint = aPaint;
 		paintOpen = anotherPaint;
@@ -76,13 +74,14 @@ public class LabyrinthView extends View {
 		CELL_WIDTH = screenWidth/3;
 		CELL_HEIGHT = CELL_WIDTH;
 		
-		setTestures();
+		setTestures(playerRes);
 //		texture = BitmapFactory.decodeResource(getResources(), R.drawable.hedge);
 	}
 
-	private void setTestures(){
+	private void setTestures(Integer playerRes){
 		textures.add(new Texture(R.drawable.hedge_h,R.drawable.hedge_v, R.drawable.grass_9));
 //		textures.add(new Texture(R.drawable.brick_h,R.drawable.brick_v, R.drawable.ciottoli));
+		playerBitmap =BitmapFactory.decodeResource(getResources(), playerRes);
 	}	
 
 	@Override
@@ -96,7 +95,7 @@ public class LabyrinthView extends View {
 			if(animate){
 				xAnimiate ++;
 				yAnimiate ++;
-				rAnimiate--;
+				rAnimiate = (float) (rAnimiate - 0.3);
 				
 				if(xAnimiate >= 600){
 					animate = false;
@@ -149,30 +148,43 @@ public class LabyrinthView extends View {
 			drawNorthWall(canvas, cell, xOffset, yOffset, showCoords);
 			drawSouthWall(canvas, cell, xOffset, yOffset, showCoords);
 			drawEastWall(canvas, cell, xOffset, yOffset, showCoords);
+			if (labyrinth.getPlayer().getPosition().equals(cell)) {
+				canvas.drawCircle(getXOfCellCenter(cell, xOffset)+xAnimiate,
+						getYOfCellCenter(cell, yOffset)+yAnimiate, getRadiusOfCircle()+rAnimiate,
+						playerPaint);
+				if (showCoords) {
+					canvas.drawText(getXOfCellCenter(cell, xOffset) + ", "
+							+ getYOfCellCenter(cell, yOffset),
+							getXOfCellCenter(cell, 70 + xOffset),
+							getYOfCellCenter(cell, -35 + yOffset), textPaint);
+				}
+			}
+			
 		} else {
 			drawBitmapCellFloor(canvas,cell,xOffset,yOffset);
 			drawBitmapWestWall(canvas, cell, xOffset, yOffset, showCoords);
 			drawBitmapNorthWall(canvas, cell, xOffset, yOffset, showCoords);
 			drawBitmapSouthWall(canvas, cell, xOffset, yOffset, showCoords);
 			drawBitmapEastWall(canvas, cell, xOffset, yOffset, showCoords);
+			if (labyrinth.getPlayer().getPosition().equals(cell)) {
+				drawBitmapPlayer(canvas,cell, xOffset,yOffset);
+			}
 		}	
 
-		if (labyrinth.getPlayer().getPosition().equals(cell)) {
-			canvas.drawCircle(getXOfCellCenter(cell, xOffset)+xAnimiate,
-					getYOfCellCenter(cell, yOffset)+yAnimiate, getRadiusOfCircle()+rAnimiate,
-					playerPaint);
-			if (showCoords) {
-				canvas.drawText(getXOfCellCenter(cell, xOffset) + ", "
-						+ getYOfCellCenter(cell, yOffset),
-						getXOfCellCenter(cell, 70 + xOffset),
-						getYOfCellCenter(cell, -35 + yOffset), textPaint);
-			}
-		}
+		
 		if (showCoords) {
 			canvas.drawText("[" + cell.getRow() + "," + cell.getCol() + "]",
 					getXOfCellCenter(cell, 25 + xOffset),
 					getYOfCellCenter(cell, -5 + yOffset), textPaint);
 		}
+	}
+
+	private void drawBitmapPlayer(Canvas canvas, Cell cell, float xOffset, float yOffset) {
+//		canvas.drawCircle(getXOfCellCenter(cell, xOffset)+xAnimiate,
+//				getYOfCellCenter(cell, yOffset)+yAnimiate, getRadiusOfCircle()+rAnimiate,
+//				playerPaint);
+		canvas.drawBitmap(playerBitmap, getXFromCell(cell, xOffset)+xAnimiate, getYFromCell(cell, yOffset)+yAnimiate, playerPaint);
+		
 	}
 
 	private void drawBitmapCellFloor(Canvas canvas, Cell cell, float xOffset2,
@@ -408,7 +420,8 @@ public class LabyrinthView extends View {
 //		Log.d(LOG_TAG, "level="+level+" landscape="+landscape);
 		
 //		if(level%2==0){	
-			texture = textures.get(landscape++);
+		texture = textures.get(0);
+//			texture = textures.get(landscape++);
 			texture.setImgs(BitmapFactory.decodeResource(getResources(),texture.getHorizontal()), 
 					BitmapFactory.decodeResource(getResources(),texture.getVertical()),
 					BitmapFactory.decodeResource(getResources(),texture.getFloor()));

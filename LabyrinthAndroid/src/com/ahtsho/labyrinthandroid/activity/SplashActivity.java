@@ -1,7 +1,6 @@
 package com.ahtsho.labyrinthandroid.activity;
 
 import com.ahtsho.labyrinthandroid.R;
-import com.ahtsho.labyrinthandroid.R.layout;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,7 +25,7 @@ public class SplashActivity extends Activity {
 			public void run() {
 				// This method will be executed once the timer is over
 				// Start your app main activity
-				Intent i = new Intent(SplashActivity.this, GameActivity.class);
+				Intent i = new Intent(SplashActivity.this, SettingsActivity.class);
 				startActivity(i);
 
 				// close this activity
