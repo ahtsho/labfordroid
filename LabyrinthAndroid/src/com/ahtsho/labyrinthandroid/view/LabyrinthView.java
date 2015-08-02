@@ -34,9 +34,11 @@ public class LabyrinthView extends View {
 	private int level = 1;
 	private float screenWidth = 0;
 	private float screenHeight = 0;
-	private  float CELL_WIDTH = 300;// make di
-	private  float CELL_HEIGHT = 300;
-
+	private static float CELL_WIDTH = 300;// make di
+	private static float CELL_HEIGHT = 300;
+	private static float LEFT_MARGIN = 30;
+	private static float TOP_MARGIN = 15;
+	
 	private boolean startingFromPlayerCell = false;
 	private float xdown = 0;
 	private float ydown = 0;
@@ -45,6 +47,8 @@ public class LabyrinthView extends View {
 	private boolean sameLevel = true;
 	private float xOffset = 0;
 	private float yOffset = 0;
+	private float topScreenPadding = 0;
+	private float leftScreenPadding = 0;
 	private float xAnimiate =0;
 	private float yAnimiate =0;
 	private float rAnimiate =0;
@@ -53,7 +57,6 @@ public class LabyrinthView extends View {
 	private ArrayList<Texture> textures = new ArrayList<Texture>();
 	int landscape = 0;
 	boolean animate = false;
-//	boolean animationEnded = false;
 	Bitmap playerBitmap = null;
 
 	public LabyrinthView(Context context, Paint aPaint, Paint anotherPaint,
@@ -81,7 +84,11 @@ public class LabyrinthView extends View {
 	private void setTestures(Integer playerRes){
 		textures.add(new Texture(R.drawable.hedge_h,R.drawable.hedge_v, R.drawable.grass_9));
 //		textures.add(new Texture(R.drawable.brick_h,R.drawable.brick_v, R.drawable.ciottoli));
-		playerBitmap =BitmapFactory.decodeResource(getResources(), playerRes);
+		if(playerRes > 0){
+			playerBitmap =BitmapFactory.decodeResource(getResources(), playerRes);
+		} else {
+			playerBitmap =BitmapFactory.decodeResource(getResources(), R.drawable.face1);
+		}
 	}	
 
 	@Override
@@ -89,9 +96,10 @@ public class LabyrinthView extends View {
 		super.onDraw(canvas);
 		canvas.drawColor(Color.BLACK);
 		ArrayList<Cell> cells = labyrinth.getCells();
+		centerSmallLabyrinths();
 		for (int i = 0; i < cells.size(); i++) {
 			shiftPlayerOnScreen();
-			drawCell(canvas, cells.get(i), xOffset, yOffset, false);
+			drawCell(canvas, cells.get(i), xOffset-leftScreenPadding, yOffset-topScreenPadding, false);
 			if(animate){
 				xAnimiate ++;
 				yAnimiate ++;
@@ -112,6 +120,16 @@ public class LabyrinthView extends View {
 			}
 		}
 		invalidate();
+	}
+
+	private void centerSmallLabyrinths() {
+		Log.d("Labview","lab height = "+labyrinth.getDimension()*CELL_HEIGHT+", screenHeight " +screenHeight);
+		if(labyrinth.getDimension()*CELL_HEIGHT < screenHeight){
+			topScreenPadding = (screenHeight - labyrinth.getDimension()*CELL_HEIGHT)/2; 
+		}
+		if(labyrinth.getDimension()*CELL_WIDTH < screenWidth){
+			leftScreenPadding = (screenWidth - labyrinth.getDimension()*CELL_WIDTH)/2; 
+		}
 	}
 
 	private void shiftPlayerOnScreen() {
@@ -180,15 +198,14 @@ public class LabyrinthView extends View {
 	}
 
 	private void drawBitmapPlayer(Canvas canvas, Cell cell, float xOffset, float yOffset) {
-//		canvas.drawCircle(getXOfCellCenter(cell, xOffset)+xAnimiate,
-//				getYOfCellCenter(cell, yOffset)+yAnimiate, getRadiusOfCircle()+rAnimiate,
-//				playerPaint);
-		canvas.drawBitmap(playerBitmap, getXFromCell(cell, xOffset)+xAnimiate, getYFromCell(cell, yOffset)+yAnimiate, playerPaint);
+		canvas.drawBitmap(playerBitmap, 
+				getXFromCell(cell, xOffset)+xAnimiate+LEFT_MARGIN, 
+				getYFromCell(cell, yOffset)+yAnimiate+TOP_MARGIN, playerPaint);
 		
 	}
 
-	private void drawBitmapCellFloor(Canvas canvas, Cell cell, float xOffset2,
-			float yOffset2) {
+	private void drawBitmapCellFloor(Canvas canvas, Cell cell, float xOffset,
+			float yOffset) {
 		Rect dst = new Rect((int)getXFromCell(cell, xOffset),
 				(int) getYFromCell(cell, yOffset), 
 				(int)getXFromNextCell(cell, xOffset),
@@ -452,10 +469,12 @@ public class LabyrinthView extends View {
 
 	private boolean belongstoPlayerPosition(float x, float y) {
 		Cell c = labyrinth.getPlayer().getPosition();
-		float cellTopLeftX = getXFromCell(c, xOffset);
-		float cellTopLeftY = getYFromCell(c, yOffset);
-		float cellTopRightX = getXFromCell(c, xOffset) + CELL_WIDTH;
-		float cellBottomLeftY = getYFromCell(c, yOffset) + CELL_HEIGHT;
+		float cellTopLeftX = getXFromCell(c, xOffset+leftScreenPadding);
+		Log.d("belongs to player position","cellTopLeftX="+cellTopLeftX);
+		float cellTopLeftY = getYFromCell(c, yOffset+topScreenPadding);
+		Log.d("belongs to player position","cellTopLefty="+cellTopLeftX);
+		float cellTopRightX = getXFromCell(c, xOffset) + CELL_WIDTH+leftScreenPadding;
+		float cellBottomLeftY = getYFromCell(c, yOffset) + CELL_HEIGHT+topScreenPadding;
 
 		if ((x < cellTopRightX) && (x > cellTopLeftX) && (y < cellBottomLeftY)
 				&& (y > cellTopLeftY)) {
