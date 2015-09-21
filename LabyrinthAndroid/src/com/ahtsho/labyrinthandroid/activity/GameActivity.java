@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,8 +30,7 @@ public class GameActivity extends Activity {
 	private Paint playerPaint = new Paint();
 	private Paint creaturePaint = new Paint();
 	private Paint textPaint = new Paint();
-	private Player player = new Player("F", 3);
-
+	private Player player = new Player("F", 3);	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
