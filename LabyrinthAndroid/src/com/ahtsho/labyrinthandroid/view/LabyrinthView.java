@@ -2,9 +2,14 @@ package com.ahtsho.labyrinthandroid.view;
 
 import game.Level;
 import infrastructure.*;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import tools.Tool;
+
 import com.ahtsho.labyrinthandroid.R;
+
 import creatures.Creature;
 import creatures.Player;
 import android.annotation.TargetApi;
@@ -36,11 +41,11 @@ public class LabyrinthView extends View {
 	private static final int WALL_THICKNESS_TOP = 25;
 	private static final int WALL_THICKNESS_LEFT = 25;
 	private Labyrinth labyrinth;
-	private Paint paint;
-	private Paint paintOpen;
-	private Paint playerPaint;
-	private Paint creaturePaint;
-	private Paint textPaint;
+	private Paint paintCell;
+	private Paint paintEmptyWall;
+	private Paint paintPlayer;
+	private Paint paintCreature;
+	private Paint paintText;
 	private int level = 1;
 	private float screenWidth = 0;
 	private float screenHeight = 0;
@@ -48,7 +53,6 @@ public class LabyrinthView extends View {
 	private static float CELL_HEIGHT = 300;
 	private static float LEFT_MARGIN = 30;
 	private static float TOP_MARGIN = 0;
-
 	private float xdown = 0;
 	private float ydown = 0;
 	private float xup = 0;
@@ -64,50 +68,51 @@ public class LabyrinthView extends View {
 
 	private Texture texture = null;
 	private ArrayList<Texture> textures = new ArrayList<Texture>();
-	int landscape = 0;
-	boolean animate = false;
-	char exitDirection = ' ';
-	Bitmap playerBitmap = null;
-	Player player = null;
-	Activity mainActivity;
-	Vibrator vb;
-	MediaPlayer mp = null;
+	private boolean animate = false;
+	private char exitDirection = ' ';
+	private Bitmap playerBitmap = null;
+	private Player player = null;
+	private Activity mainActivity;
+	private Vibrator vb;
+	private MediaPlayer mp = null;
 	
-	public LabyrinthView(Context context, Paint aPaint, Paint anotherPaint, Paint aPlayerPaint, Paint aTextPaint, Paint aCreaturePaint,
-			Integer playerRes, Labyrinth aLab) {
+	public LabyrinthView(Context context, HashMap<String,Paint> paints,Integer playerRes, Labyrinth aLab) {
 		super(context);
-		paint = aPaint;
-		paintOpen = anotherPaint;
-		playerPaint = aPlayerPaint;
-		creaturePaint = aCreaturePaint;
+		mainActivity = (Activity) this.getContext();
+		
 		labyrinth = aLab;
-		textPaint = aTextPaint;
 		player = labyrinth.getPlayer();
+		playerBitmap=Bitmapper.getBitmap(labyrinth.getPlayer(), this);
+		
+		initializePainters(paints);
+		initializeCellDimension(context);
+		centerSmallLabyrinths();
+		
+		textures.add(new Texture(R.drawable.hedge_h, R.drawable.hedge_v, R.drawable.grass_9));
+		
+		vb = (Vibrator) mainActivity.getSystemService(Context.VIBRATOR_SERVICE);
+	}
+
+	private void initializeCellDimension(Context context) {
 		DisplayMetrics displaymetrics = new DisplayMetrics();
 		WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 		wm.getDefaultDisplay().getMetrics(displaymetrics);
+		
 		screenHeight = displaymetrics.heightPixels;
 		screenWidth = displaymetrics.widthPixels;
 		CELL_WIDTH = screenWidth / 3;
 		CELL_HEIGHT = CELL_WIDTH;
-		centerSmallLabyrinths();
-		setTextures(playerRes);
-		mainActivity = (Activity) this.getContext();
-		vb = (Vibrator) mainActivity.getSystemService(Context.VIBRATOR_SERVICE);
-		// texture = BitmapFactory.decodeResource(getResources(),
-		// R.drawable.hedge);
 	}
 
-	private void setTextures(Integer playerRes) {
-		textures.add(new Texture(R.drawable.hedge_h, R.drawable.hedge_v, R.drawable.grass_9));
-		// textures.add(new Texture(R.drawable.brick_h,R.drawable.brick_v,
-		// R.drawable.ciottoli));
-		if (playerRes > 0) {
-			playerBitmap = BitmapFactory.decodeResource(getResources(), playerRes);
-		} else {
-			playerBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.face1);
-		}
+	private void initializePainters(HashMap<String, Paint> paints) {
+		paintCell = paints.get("cell");
+		paintEmptyWall = paints.get("empry_wall");
+		paintPlayer = paints.get("player");
+		paintCreature = paints.get("creature");
+		paintText = paints.get("text");
 	}
+
+	
 
 	@Override
 	protected void onDraw(Canvas canvas) {
@@ -227,7 +232,7 @@ public class LabyrinthView extends View {
 				for (Tool t : cell.getTools()) {
 					canvas.drawRect(new Rect((int) (getXFromCell(cell, xOffset) + CELL_WIDTH / 3),
 							(int) (getYFromCell(cell, yOffset) + CELL_HEIGHT * 1 / 4), (int) (getXFromNextCell(cell, xOffset) - CELL_WIDTH / 3),
-							(int) (getYFormNextCell(cell, yOffset) - CELL_HEIGHT * 1 / 4)), creaturePaint);
+							(int) (getYFormNextCell(cell, yOffset) - CELL_HEIGHT * 1 / 4)), paintCreature);
 				}
 			}
 			if (cell.getHosts().size() == 0 && cell.getTools().size() == 0) {
@@ -235,10 +240,10 @@ public class LabyrinthView extends View {
 				for (Creature p : cell.getHosts()) {
 					if (p instanceof Player) {
 						canvas.drawCircle(getXOfCellCenter(cell, xOffset) + xAnimiate, getYOfCellCenter(cell, yOffset) + yAnimiate,
-								getRadiusOfCircle() + zoom, playerPaint);
+								getRadiusOfCircle() + zoom, paintPlayer);
 					} else {
 						canvas.drawCircle(getXOfCellCenter(cell, xOffset) + xAnimiate, getYOfCellCenter(cell, yOffset) + yAnimiate,
-								getRadiusOfCircle() + zoom, creaturePaint);
+								getRadiusOfCircle() + zoom, paintCreature);
 					}
 				}
 			}
@@ -247,10 +252,10 @@ public class LabyrinthView extends View {
 			if (labyrinth.getPlayer() != null) {
 				if (labyrinth.getPlayer().getPosition().equals(cell)) {
 					canvas.drawCircle(getXOfCellCenter(cell, xOffset) + xAnimiate, getYOfCellCenter(cell, yOffset) + yAnimiate, getRadiusOfCircle()
-							+ zoom, playerPaint);
+							+ zoom, paintPlayer);
 					if (showCoords) {
 						canvas.drawText(getXOfCellCenter(cell, xOffset) + ", " + getYOfCellCenter(cell, yOffset),
-								getXOfCellCenter(cell, 70 + xOffset), getYOfCellCenter(cell, -35 + yOffset), textPaint);
+								getXOfCellCenter(cell, 70 + xOffset), getYOfCellCenter(cell, -35 + yOffset), paintText);
 					}
 				}
 			}
@@ -264,7 +269,7 @@ public class LabyrinthView extends View {
 			if (cell.getHosts().size() == 0) {
 			} else if (cell.getHosts().size() > 0) {
 				ArrayList<Creature> hosts = cell.getHosts();
-				try {
+//				try {
 					synchronized (hosts) {
 						for (Creature p : hosts) {
 							if (p instanceof Player) {
@@ -274,9 +279,9 @@ public class LabyrinthView extends View {
 							}
 						}
 					}
-				} catch (Exception e) {
-					System.out.println("HOSTS=" + hosts.toString() + "-" + e.getMessage());
-				}
+//				} catch (Exception e) {
+//					System.out.println("HOSTS=" + hosts.toString() + "-" + e.getMessage());
+//				}
 
 			}
 			if (cell.getTools().size() == 0) {
@@ -291,32 +296,32 @@ public class LabyrinthView extends View {
 
 		if (showCoords) {
 			canvas.drawText("[" + cell.getRow() + "," + cell.getCol() + "]", getXOfCellCenter(cell, 25 + xOffset),
-					getYOfCellCenter(cell, -5 + yOffset), textPaint);
+					getYOfCellCenter(cell, -5 + yOffset), paintText);
 		}
 	}
 
 	private void drawBitmapTool(Tool t, Canvas canvas, Cell cell, float xOffset, float yOffset) {
 		canvas.drawBitmap(Bitmapper.getBitmap(t, this), getXFromCell(cell, xOffset) + LEFT_MARGIN, getYFromCell(cell, yOffset) + TOP_MARGIN,
-				playerPaint);
+				paintPlayer);
 
 	}
 
 	private void drawBitmapCreature(Creature c, Canvas canvas, Cell cell, float xOffset, float yOffset) {
 		canvas.drawBitmap(Bitmapper.getBitmap(c, this), getXFromCell(cell, xOffset) + LEFT_MARGIN, getYFromCell(cell, yOffset) + TOP_MARGIN,
-				playerPaint);
+				paintPlayer);
 
 	}
 
 	private void drawBitmapPlayer(Canvas canvas, Cell cell, float xOffset, float yOffset) {
 		canvas.drawBitmap(playerBitmap, getXFromCell(cell, xOffset) + xAnimiate + LEFT_MARGIN, getYFromCell(cell, yOffset) + yAnimiate + TOP_MARGIN,
-				playerPaint);
+				paintPlayer);
 
 	}
 
 	private void drawBitmapCellFloor(Canvas canvas, Cell cell, float xOffset, float yOffset) {
 		Rect dst = new Rect((int) getXFromCell(cell, xOffset), (int) getYFromCell(cell, yOffset), (int) getXFromNextCell(cell, xOffset),
 				(int) getYFormNextCell(cell, yOffset));
-		canvas.drawBitmap(texture.getFloorBitmap(), null, dst, paint);
+		canvas.drawBitmap(texture.getFloorBitmap(), null, dst, paintCell);
 	}
 
 	private void drawBitmapEastWall(Canvas canvas, Cell cell, float xOffset, float yOffset, boolean showCoords) {
@@ -324,7 +329,7 @@ public class LabyrinthView extends View {
 			Rect dst = new Rect((int) getXFromNextCell(cell, xOffset) - WALL_THICKNESS_LEFT, (int) getYFromCell(cell, yOffset) - WALL_THICKNESS_TOP,
 					(int) getXFromNextCell(cell, xOffset) + WALL_THICKNESS_RIGHT, (int) getYFormNextCell(cell, yOffset) + WALL_THICKNESS_BOTTOM);
 
-			canvas.drawBitmap(texture.getVBitmap(), null, dst, paint);
+			canvas.drawBitmap(texture.getVBitmap(), null, dst, paintCell);
 		}
 		if (showCoords) {
 		}
@@ -333,10 +338,10 @@ public class LabyrinthView extends View {
 	private void drawEastWall(Canvas canvas, Cell cell, float xOffset, float yOffset, boolean showCoords) {
 		if (cell.isEast()) {
 			canvas.drawLine(getXFromNextCell(cell, xOffset), getYFromCell(cell, yOffset), getXFromNextCell(cell, xOffset),
-					getYFormNextCell(cell, yOffset), paint);// east
+					getYFormNextCell(cell, yOffset), paintCell);// east
 		} else {
 			canvas.drawLine(getXFromNextCell(cell, xOffset), getYFromCell(cell, yOffset), getXFromNextCell(cell, xOffset),
-					getYFormNextCell(cell, yOffset), paintOpen);
+					getYFormNextCell(cell, yOffset), paintEmptyWall);
 		}
 		if (showCoords) {
 		}
@@ -347,7 +352,7 @@ public class LabyrinthView extends View {
 			Rect dst = new Rect((int) getXFromCell(cell, xOffset) - WALL_THICKNESS_LEFT, (int) getYFormNextCell(cell, yOffset) - WALL_THICKNESS_TOP,
 					(int) getXFromNextCell(cell, xOffset) + WALL_THICKNESS_RIGHT, (int) getYFormNextCell(cell, yOffset) + WALL_THICKNESS_BOTTOM);
 
-			canvas.drawBitmap(texture.getHBitmap(), null, dst, paint);
+			canvas.drawBitmap(texture.getHBitmap(), null, dst, paintCell);
 
 		}
 		if (showCoords) {
@@ -357,10 +362,10 @@ public class LabyrinthView extends View {
 	private void drawSouthWall(Canvas canvas, Cell cell, float xOffset, float yOffset, boolean showCoords) {
 		if (cell.isSouth()) {
 			canvas.drawLine(getXFromCell(cell, xOffset), getYFormNextCell(cell, yOffset), getXFromNextCell(cell, xOffset),
-					getYFormNextCell(cell, yOffset), paint);// south
+					getYFormNextCell(cell, yOffset), paintCell);// south
 		} else {
 			canvas.drawLine(getXFromCell(cell, xOffset), getYFormNextCell(cell, yOffset), getXFromNextCell(cell, xOffset),
-					getYFormNextCell(cell, yOffset), paintOpen);
+					getYFormNextCell(cell, yOffset), paintEmptyWall);
 		}
 		if (showCoords) {
 		}
@@ -370,7 +375,7 @@ public class LabyrinthView extends View {
 		if (cell.isNorth()) {
 			Rect dst = new Rect((int) getXFromCell(cell, xOffset) - WALL_THICKNESS_LEFT, (int) getYFromCell(cell, yOffset) - WALL_THICKNESS_TOP,
 					(int) getXFromNextCell(cell, xOffset) + WALL_THICKNESS_RIGHT, (int) getYFromCell(cell, yOffset) + WALL_THICKNESS_BOTTOM);
-			canvas.drawBitmap(texture.getHBitmap(), null, dst, paint);
+			canvas.drawBitmap(texture.getHBitmap(), null, dst, paintCell);
 		}
 		if (showCoords) {
 		}
@@ -379,10 +384,10 @@ public class LabyrinthView extends View {
 	private void drawNorthWall(Canvas canvas, Cell cell, float xOffset, float yOffset, boolean showCoords) {
 		if (cell.isNorth()) {
 			canvas.drawLine(getXFromCell(cell, xOffset), getYFromCell(cell, yOffset), getXFromNextCell(cell, xOffset), getYFromCell(cell, yOffset),
-					paint);// north
+					paintCell);// north
 		} else {
 			canvas.drawLine(getXFromCell(cell, xOffset), getYFromCell(cell, yOffset), getXFromNextCell(cell, xOffset), getYFromCell(cell, yOffset),
-					paintOpen);
+					paintEmptyWall);
 		}
 		if (showCoords) {
 		}
@@ -394,30 +399,30 @@ public class LabyrinthView extends View {
 			Rect dst = new Rect((int) getXFromCell(cell, xOffset) - WALL_THICKNESS_LEFT, (int) getYFromCell(cell, yOffset) - WALL_THICKNESS_TOP,
 					(int) getXFromCell(cell, xOffset) + WALL_THICKNESS_RIGHT, (int) getYFormNextCell(cell, yOffset) + WALL_THICKNESS_BOTTOM);
 
-			canvas.drawBitmap(texture.getVBitmap(), null, dst, paint);
+			canvas.drawBitmap(texture.getVBitmap(), null, dst, paintCell);
 		}
 		if (showCoords) {
 			canvas.drawText("W(" + getXFromCell(cell, xOffset) + "," + getYFromCell(cell, yOffset) + ")", getXFromCell(cell, -10 + xOffset),
-					getYFromCell(cell, -30 + yOffset), textPaint);
+					getYFromCell(cell, -30 + yOffset), paintText);
 			canvas.drawText("(" + getXFromCell(cell, xOffset) + "," + getYFormNextCell(cell, yOffset) + ")", getXFromCell(cell, -10 + xOffset),
-					getYFormNextCell(cell, 20 + yOffset), textPaint);
+					getYFormNextCell(cell, 20 + yOffset), paintText);
 		}
 	}
 
 	private void drawWestWall(Canvas canvas, Cell cell, float xOffset, float yOffset, boolean showCoords) {
 		if (cell.isWest()) {
 			canvas.drawLine(getXFromCell(cell, xOffset), getYFromCell(cell, yOffset), getXFromCell(cell, xOffset), getYFormNextCell(cell, yOffset),
-					paint);
+					paintCell);
 
 		} else {
 			canvas.drawLine(getXFromCell(cell, xOffset), getYFromCell(cell, yOffset), getXFromCell(cell, xOffset), getYFormNextCell(cell, yOffset),
-					paintOpen);
+					paintEmptyWall);
 		}
 		if (showCoords) {
 			canvas.drawText("W(" + getXFromCell(cell, xOffset) + "," + getYFromCell(cell, yOffset) + ")", getXFromCell(cell, -10 + xOffset),
-					getYFromCell(cell, -30 + yOffset), textPaint);
+					getYFromCell(cell, -30 + yOffset), paintText);
 			canvas.drawText("(" + getXFromCell(cell, xOffset) + "," + getYFormNextCell(cell, yOffset) + ")", getXFromCell(cell, -10 + xOffset),
-					getYFormNextCell(cell, 20 + yOffset), textPaint);
+					getYFormNextCell(cell, 20 + yOffset), paintText);
 		}
 	}
 

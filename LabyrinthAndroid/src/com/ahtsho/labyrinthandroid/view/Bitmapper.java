@@ -9,9 +9,36 @@ import android.graphics.BitmapFactory;
 import android.view.View;
 import creatures.Creature;
 import creatures.Guard;
+import creatures.Player;
 
 public class Bitmapper {
+	public static Bitmap getBitmap(Player p, View v){
+		Bitmap playerBitmap = null;
+		if(p != null){
+			switch (p.getId()) {
+			case 1:
+				playerBitmap = BitmapFactory.decodeResource(v.getResources(), R.drawable.face1);
+				break;
+			
+			case 2:
+				playerBitmap = BitmapFactory.decodeResource(v.getResources(), R.drawable.face2);
+				break;
+
+			case 3:
+				playerBitmap = BitmapFactory.decodeResource(v.getResources(), R.drawable.face3);
+				break;
 	
+			case 4:
+				playerBitmap = BitmapFactory.decodeResource(v.getResources(), R.drawable.face4);
+				break;
+
+			default:
+				break;
+			}
+			
+		}
+		return playerBitmap;
+	}
 	public static Bitmap getBitmap(Creature c, View v) {
 		Bitmap creatureBitmap = null;
 		if(c instanceof Guard){

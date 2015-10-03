@@ -15,4 +15,5 @@
 	<string name="player_2_name">Nadine</string>
 	<string name="player_3_name">Ettorino</string>
 	<string name="player_4_name">Aster</string>
+	<string name="toolbar_text">Life</string>
 </resources>

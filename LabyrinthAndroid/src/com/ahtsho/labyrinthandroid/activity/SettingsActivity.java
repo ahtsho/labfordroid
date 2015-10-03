@@ -35,6 +35,7 @@ public class SettingsActivity extends Activity {
 			public void onClick(View v) {
 				Intent gameIntent = new Intent(SettingsActivity.this,
 						GameActivity.class);
+				
 				gameIntent.putExtra("player", chosenPlayer);//player_1_name.getText()
 				gameIntent.putExtra("name", name);
 				startActivity(gameIntent);
