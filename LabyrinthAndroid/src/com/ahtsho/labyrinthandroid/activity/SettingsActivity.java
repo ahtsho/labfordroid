@@ -1,7 +1,10 @@
 package com.ahtsho.labyrinthandroid.activity;
 
 import com.ahtsho.labyrinthandroid.R;
+import com.ahtsho.labyrinthandroid.service.SoundSource;
 
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -17,12 +20,19 @@ import android.widget.Toast;
 public class SettingsActivity extends Activity {
 	private int chosenPlayer = 0;
 	private String name = "";
-
+//MediaPlayer mp = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.activity_settings);
-
+		SoundSource.playBackgroundMusic(this.getApplicationContext());
+//		mp = MediaPlayer.create(this.getApplicationContext(), R.raw.basic_im_wearing_my_dancing_pants);
+//		mp.setLooping(true);
+//		float volume= ((AudioManager) getSystemService(AUDIO_SERVICE)).getStreamVolume(AudioManager.STREAM_MUSIC) * 0.01f;
+//		mp.setVolume(volume, volume);
+//		mp.start();
+		
 		handlePlayerChoice(R.id.imageButton1,R.drawable.face1,R.id.editText_player_1);
 		handlePlayerChoice(R.id.imageButton2,R.drawable.face2,R.id.editText_player_2);
 		handlePlayerChoice(R.id.imageButton3,R.drawable.face3,R.id.editText_player_3);
@@ -38,6 +48,7 @@ public class SettingsActivity extends Activity {
 				
 				gameIntent.putExtra("player", chosenPlayer);//player_1_name.getText()
 				gameIntent.putExtra("name", name);
+				
 				startActivity(gameIntent);
 				finish();
 			}

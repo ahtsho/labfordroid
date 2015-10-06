@@ -12,7 +12,6 @@ import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-
 import com.ahtsho.labyrinthandroid.R;
 import com.ahtsho.labyrinthandroid.view.LabyrinthView;
 
@@ -34,6 +33,7 @@ public class GameActivity extends Activity {
 		} catch (Exception e) {
 			Log.e("GameActivity","Error:"+e.getMessage());
 		}
+
 		setContentView(new LabyrinthView(this, paints,(Integer)getIntent().getExtras().get("player"),lab));
 		setActionBar();
 	}
