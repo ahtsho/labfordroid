@@ -9,7 +9,6 @@ import tools.Plaster;
 import tools.Tool;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 
@@ -26,7 +25,12 @@ public class SoundSource {
 	public final static int ANGRY = 3;
 	public final static int HAPPY = 4;
 
+	public final static int SYSTEM_STATUS_GAME_OVER = 10;
+	public final static int SYSTEM_STATUS_END_GAME = 11;
+	public final static int SYSTEM_STATUS_RESTART_GAME = 12;
+	
 	private static MediaPlayer backgroubdMP = null;
+	
 
 	public SoundSource(Creature creature, int type, Activity activity) {
 		MediaPlayer mediaPlayer = null;
@@ -84,6 +88,10 @@ public class SoundSource {
 		mediaPlayer.start();
 	}
 
+	public SoundSource(int systemStatus, Activity mainActivity) {
+		
+	}
+
 	public static void playBackgroundMusic(Context context) {
 		backgroubdMP = MediaPlayer.create(context, R.raw.basic_im_wearing_my_dancing_pants);
 		backgroubdMP.setLooping(true);
@@ -95,5 +103,49 @@ public class SoundSource {
 	public static void stopBackgoundMusic() {
 		backgroubdMP.stop();
 	}
+
+	public static void play(int systemStatusGameOver, Activity mainActivity) {
+		
+	}
+
+	public static void play(Creature creature, int type, Activity activity) {
+		MediaPlayer mediaPlayer = null;
+		if (creature != null) {
+			if (creature instanceof Guard) {
+				if (type == ANGRY) {
+					if (creature.getName() == "G3") {
+						mediaPlayer = MediaPlayer.create(activity.getApplicationContext(), R.raw.monster_hiss);
+					} else if (creature.getName() == "G5") {
+						mediaPlayer = MediaPlayer.create(activity.getApplicationContext(), R.raw.monster_hiss);
+					} else if (creature.getName() == "G8") {
+						mediaPlayer = MediaPlayer.create(activity.getApplicationContext(), R.raw.monster_hiss);
+					} else if (creature.getName() == "G9") {
+						mediaPlayer = MediaPlayer.create(activity.getApplicationContext(), R.raw.monster_hiss);
+					}
+				}
+			} else if (creature instanceof Player) {
+				switch (type) {
+				case EXIT:
+					mediaPlayer = MediaPlayer.create(activity.getApplicationContext(), R.raw.exit);
+					break;
+				case PAIN:
+					mediaPlayer = MediaPlayer.create(activity.getApplicationContext(), R.raw.ouch);
+					break;
+				case BUMP:
+					mediaPlayer = MediaPlayer.create(activity.getApplicationContext(), R.raw.bump);
+					break;
+				case HAPPY:
+					mediaPlayer = MediaPlayer.create(activity.getApplicationContext(), R.raw.cracking_up);
+					break;	
+				default:
+					break;
+				}
+			}
+		}
+
+		mediaPlayer.start();
+	}
+
+	
 
 }

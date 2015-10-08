@@ -37,6 +37,8 @@ import android.widget.Toast;
 
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class LabyrinthView extends View {
+	private static final int PLAYER_EXIT_ANIMATION_Y_AXIS_MAX_VALUE = 600;
+	private static final int PLAYER_EXIT_ANIMATION_X_AXIS_MAX_VALUE = 600;
 	private static final int WALL_THICKNESS_BOTTOM = 25;
 	private static final int WALL_THICKNESS_RIGHT = 25;
 	private static final int WALL_THICKNESS_TOP = 25;
@@ -75,7 +77,8 @@ public class LabyrinthView extends View {
 	private Player player = null;
 	private Activity mainActivity;
 	private Vibrator vb;
-
+	private AlertDialog alertDialog = null;
+	
 	public LabyrinthView(Context context, HashMap<String, Paint> paints, Integer playerRes, Labyrinth aLab) {
 		super(context);
 		mainActivity = (Activity) this.getContext();
@@ -91,6 +94,46 @@ public class LabyrinthView extends View {
 		textures.add(new Texture(R.drawable.hedge_h, R.drawable.hedge_v, R.drawable.grass_9));
 
 		vb = (Vibrator) mainActivity.getSystemService(Context.VIBRATOR_SERVICE);
+		prepareAlertDialog();
+	}
+	private AlertDialog.Builder alertDialogBuilder = null;
+	android.content.DialogInterface.OnClickListener quitClickListener = null;
+
+	private android.content.DialogInterface.OnClickListener createQuitDialog() {
+		if (quitClickListener == null) {
+			quitClickListener = new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					new SoundSource(SoundSource.SYSTEM_STATUS_END_GAME, mainActivity);
+					mainActivity.finish();
+				}
+			};
+		}
+		return quitClickListener;
+	}
+
+	android.content.DialogInterface.OnClickListener restartClickListener = null;
+
+	private android.content.DialogInterface.OnClickListener createRestartDialog() {
+		if (restartClickListener == null) {
+			restartClickListener = new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					Level.goTo(-(Level.currentLevel - 3));
+					new SoundSource(SoundSource.SYSTEM_STATUS_RESTART_GAME, mainActivity);
+					mainActivity.recreate();
+				}
+			};
+		}
+		return restartClickListener;
+	}
+
+	private void prepareAlertDialog() {
+		alertDialogBuilder = new AlertDialog.Builder(mainActivity);
+		alertDialogBuilder.setMessage("GAME OVER");
+		alertDialogBuilder.setPositiveButton("Restart", createRestartDialog());
+		alertDialogBuilder.setNegativeButton("Quit", createQuitDialog());
+		alertDialog = alertDialogBuilder.create();
 	}
 
 	private void initializeCellDimension(Context context) {
@@ -119,6 +162,7 @@ public class LabyrinthView extends View {
 		super.onDraw(canvas);
 		canvas.drawColor(Color.BLACK);
 		ArrayList<Cell> cells = labyrinth.getCells();
+
 		for (int i = 0; i < cells.size(); i++) {
 			shiftPlayerOnScreen();
 			drawCell(canvas, cells.get(i), xOffset - leftScreenPadding, yOffset - topScreenPadding, false);
@@ -126,7 +170,8 @@ public class LabyrinthView extends View {
 				animate(exitDirection);
 				zoom = (float) (zoom - 0.3);
 
-				if (xAnimiate >= 600 || yAnimiate >= 600 || xAnimiate <= -600 || yAnimiate <= -600) {
+				if (xAnimiate >= PLAYER_EXIT_ANIMATION_X_AXIS_MAX_VALUE || yAnimiate >= PLAYER_EXIT_ANIMATION_Y_AXIS_MAX_VALUE
+						|| xAnimiate <= -PLAYER_EXIT_ANIMATION_X_AXIS_MAX_VALUE || yAnimiate <= -PLAYER_EXIT_ANIMATION_X_AXIS_MAX_VALUE) {
 					animate = false;
 					xAnimiate = 0;
 					yAnimiate = 0;
@@ -141,24 +186,9 @@ public class LabyrinthView extends View {
 			}
 		}
 		if (player.getLife() == 0) {
-			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mainActivity);
-			alertDialogBuilder.setMessage("GAME OVER");
-			alertDialogBuilder.setPositiveButton("Restart", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					Level.goTo(-(Level.currentLevel - 3));
-					mainActivity.recreate();
-				}
-			});
-			alertDialogBuilder.setNegativeButton("Quit", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					mainActivity.finish();
-					SoundSource.stopBackgoundMusic();
-				}
-			});
-			AlertDialog alertDialog = alertDialogBuilder.create();
 			alertDialog.show();
+			SoundSource.stopBackgoundMusic();
+			SoundSource.play(SoundSource.SYSTEM_STATUS_GAME_OVER, mainActivity);
 		} else {
 			invalidate();
 		}
@@ -259,7 +289,7 @@ public class LabyrinthView extends View {
 						} else {
 							drawBitmapCreature(p, canvas, cell, xOffset, yOffset);
 							if (p.getPosition().equals(labyrinth.getPlayer().getPosition()) && hasNotRoared) {
-								new SoundSource(p, SoundSource.ANGRY, mainActivity);
+								SoundSource.play(p, SoundSource.ANGRY, mainActivity);
 								new SoundSource(labyrinth.getPlayer(), SoundSource.PAIN, mainActivity);
 								hasNotRoared = false;
 							}
