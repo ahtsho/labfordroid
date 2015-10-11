@@ -55,7 +55,7 @@ public class Bitmapper {
 		return creatureBitmap;
 	}
 
-	public static Bitmap getBitmap(Tool t, LabyrinthView v) {
+	public static Bitmap getBitmap(Tool t, View v) {
 		Bitmap creatureBitmap = null;
 		if(t instanceof Plaster){
 			creatureBitmap=BitmapFactory.decodeResource(v.getResources(),R.drawable.plaster1);
