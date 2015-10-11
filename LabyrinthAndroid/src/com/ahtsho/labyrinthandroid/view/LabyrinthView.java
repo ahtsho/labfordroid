@@ -77,14 +77,14 @@ public class LabyrinthView extends View {
 	private Player player = null;
 	private Activity mainActivity;
 	private Vibrator vb;
-	private AlertDialog alertDialog = null;
+	
 	
 	public LabyrinthView(Context context, HashMap<String, Paint> paints, Integer playerRes, Labyrinth aLab) {
 		super(context);
 		mainActivity = (Activity) this.getContext();
-
 		labyrinth = aLab;
 		player = labyrinth.getPlayer();
+		
 		playerBitmap = Bitmapper.getBitmap(labyrinth.getPlayer(), this);
 
 		initializePainters(paints);
@@ -94,48 +94,9 @@ public class LabyrinthView extends View {
 		textures.add(new Texture(R.drawable.hedge_h, R.drawable.hedge_v, R.drawable.grass_9));
 
 		vb = (Vibrator) mainActivity.getSystemService(Context.VIBRATOR_SERVICE);
-		prepareAlertDialog();
+//		SoundSource.off();
 	}
-	private AlertDialog.Builder alertDialogBuilder = null;
-	android.content.DialogInterface.OnClickListener quitClickListener = null;
-
-	private android.content.DialogInterface.OnClickListener createQuitDialog() {
-		if (quitClickListener == null) {
-			quitClickListener = new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					new SoundSource(SoundSource.SYSTEM_STATUS_END_GAME, mainActivity);
-					mainActivity.finish();
-				}
-			};
-		}
-		return quitClickListener;
-	}
-
-	android.content.DialogInterface.OnClickListener restartClickListener = null;
-
-	private android.content.DialogInterface.OnClickListener createRestartDialog() {
-		if (restartClickListener == null) {
-			restartClickListener = new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					Level.goTo(-(Level.currentLevel - 3));
-					new SoundSource(SoundSource.SYSTEM_STATUS_RESTART_GAME, mainActivity);
-					mainActivity.recreate();
-				}
-			};
-		}
-		return restartClickListener;
-	}
-
-	private void prepareAlertDialog() {
-		alertDialogBuilder = new AlertDialog.Builder(mainActivity);
-		alertDialogBuilder.setMessage("GAME OVER");
-		alertDialogBuilder.setPositiveButton("Restart", createRestartDialog());
-		alertDialogBuilder.setNegativeButton("Quit", createQuitDialog());
-		alertDialog = alertDialogBuilder.create();
-	}
-
+	
 	private void initializeCellDimension(Context context) {
 		DisplayMetrics displaymetrics = new DisplayMetrics();
 		WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -157,7 +118,7 @@ public class LabyrinthView extends View {
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-		updateActionBar();
+		UICommunicationManager.updateActionBar(this, labyrinth.getPlayer().getLife());
 
 		super.onDraw(canvas);
 		canvas.drawColor(Color.BLACK);
@@ -186,21 +147,13 @@ public class LabyrinthView extends View {
 			}
 		}
 		if (player.getLife() == 0) {
-			alertDialog.show();
-			SoundSource.stopBackgoundMusic();
-			SoundSource.play(SoundSource.SYSTEM_STATUS_GAME_OVER, mainActivity);
+			UICommunicationManager.showGameOverAlertDialog(mainActivity);
 		} else {
 			invalidate();
 		}
 	}
 
-	private void updateActionBar() {
-		try {
-			((TextView) this.getRootView().findViewById(R.id.title_bar_text)).setText(" " + labyrinth.getPlayer().getLife());
-		} catch (Exception e) {
-			System.out.println("Call requires API level 11");
-		}
-	}
+	
 
 	private void centerSmallLabyrinths() {
 		Log.d("Labview", "lab height = " + labyrinth.getDimension() * CELL_HEIGHT + ", screenHeight " + screenHeight);
