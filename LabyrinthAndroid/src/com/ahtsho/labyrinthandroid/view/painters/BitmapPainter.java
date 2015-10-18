@@ -22,13 +22,15 @@ import creatures.Creature;
 import creatures.Player;
 
 public class BitmapPainter extends Painter {
+	public BitmapPainter(Activity anActivity, View aView, HashMap<String, Paint> paints) {
+		super(anActivity, aView, paints);
+	}
+
+
 	private static Texture texture = null;
 	private static Bitmap playerBitmap = null;
 	
-	public BitmapPainter(HashMap<String, Paint> paints) {
-		super(paints);
-	}
-
+	
 	public static void setTexture(Texture t){
 		texture = t;
 	}
@@ -47,7 +49,7 @@ public class BitmapPainter extends Painter {
 	public static void drawBitmapCellFloor(Canvas canvas, Cell cell, float xOffset, float yOffset) {
 		Rect dst = new Rect((int) MetricsService.getXFromCell(cell, xOffset), (int) MetricsService.getYFromCell(cell, yOffset),
 				(int) MetricsService.getXFromNextCell(cell, xOffset), (int) MetricsService.getYFormNextCell(cell, yOffset));
-		canvas.drawBitmap(texture.getFloorBitmap(), null, dst, paintCell);
+		canvas.drawBitmap(Bitmapper.getBitmap(cell,Bitmapper.CELL_FLOOR, view), null, dst, paintCell);
 	}
 	public static void drawBitmapEastWall(Canvas canvas, Cell cell, float xOffset, float yOffset, boolean showCoords) {
 		if (cell.isEast()) {
@@ -56,7 +58,7 @@ public class BitmapPainter extends Painter {
 							xOffset) + MetricsService.WALL_THICKNESS_RIGHT, (int) MetricsService.getYFormNextCell(cell, yOffset)
 							+ MetricsService.WALL_THICKNESS_BOTTOM);
 
-			canvas.drawBitmap(texture.getVBitmap(), null, dst, paintCell);
+			canvas.drawBitmap(Bitmapper.getBitmap(cell,Cell.EAST, view), null, dst, paintCell);
 		}
 		if (showCoords) {
 		}
@@ -69,7 +71,7 @@ public class BitmapPainter extends Painter {
 							cell, xOffset) + MetricsService.WALL_THICKNESS_RIGHT, (int) MetricsService.getYFormNextCell(cell, yOffset)
 							+ MetricsService.WALL_THICKNESS_BOTTOM);
 
-			canvas.drawBitmap(texture.getHBitmap(), null, dst, paintCell);
+			canvas.drawBitmap(Bitmapper.getBitmap(cell,Cell.SOUTH, view), null, dst, paintCell);
 
 		}
 		if (showCoords) {
@@ -82,7 +84,7 @@ public class BitmapPainter extends Painter {
 					(int) MetricsService.getYFromCell(cell, yOffset) - MetricsService.WALL_THICKNESS_TOP, (int) MetricsService.getXFromNextCell(cell,
 							xOffset) + MetricsService.WALL_THICKNESS_RIGHT, (int) MetricsService.getYFromCell(cell, yOffset)
 							+ MetricsService.WALL_THICKNESS_BOTTOM);
-			canvas.drawBitmap(texture.getHBitmap(), null, dst, paintCell);
+			canvas.drawBitmap(Bitmapper.getBitmap(cell,Cell.NORTH, view), null, dst, paintCell);
 		}
 		if (showCoords) {
 		}
@@ -95,8 +97,7 @@ public class BitmapPainter extends Painter {
 					(int) MetricsService.getYFromCell(cell, yOffset) - MetricsService.WALL_THICKNESS_TOP, (int) MetricsService.getXFromCell(cell,
 							xOffset) + MetricsService.WALL_THICKNESS_RIGHT, (int) MetricsService.getYFormNextCell(cell, yOffset)
 							+ MetricsService.WALL_THICKNESS_BOTTOM);
-
-			canvas.drawBitmap(texture.getVBitmap(), null, dst, paintCell);
+			canvas.drawBitmap(Bitmapper.getBitmap(cell,Cell.WEST, view), null, dst, paintCell);
 		}
 		if (showCoords) {
 			canvas.drawText("W(" + MetricsService.getXFromCell(cell, xOffset) + "," + MetricsService.getYFromCell(cell, yOffset) + ")",
@@ -124,12 +125,12 @@ public class BitmapPainter extends Painter {
 
 	}
 
-	public static void drawTools(View v,Activity activity, Canvas canvas, Cell cell,Player player, float xOffset, float yOffset) {
+	public static void drawTools(Canvas canvas, Cell cell,Player player, float xOffset, float yOffset) {
 		if (cell.getTools().size() == 0) {
 		} else if (cell.getTools().size() > 0) {
 			for (Tool t : cell.getTools()) {
 				boolean makeSound = true;
-				drawBitmapTool(v,t, canvas, cell, xOffset, yOffset);
+				drawBitmapTool(view,t, canvas, cell, xOffset, yOffset);
 				if (cell.equals(player.getPosition()) && makeSound) {
 					new SoundSource(t, activity);
 					if (t instanceof Good) {
@@ -144,7 +145,7 @@ public class BitmapPainter extends Painter {
 	}
 
 
-	public static void drawCreatures(View v,Activity activity, Canvas canvas, Cell cell,Player player, float xOffset, float yOffset, float xAnimiate, float yAnimiate, boolean hasNotRoared) {
+	public static void drawCreatures(Canvas canvas, Cell cell,Player player, float xOffset, float yOffset, float xAnimiate, float yAnimiate, boolean hasNotRoared) {
 		if (cell.getHosts().size() == 0) {
 		} else if (cell.getHosts().size() > 0) {
 			ArrayList<Creature> hosts = cell.getHosts();
@@ -153,7 +154,7 @@ public class BitmapPainter extends Painter {
 					if (p instanceof Player) {
 						BitmapPainter.drawBitmapPlayer(canvas, cell, xOffset, yOffset, xAnimiate, yAnimiate);
 					} else {
-						drawBitmapCreature(v,p, canvas, cell, xOffset, yOffset);
+						drawBitmapCreature(view,p, canvas, cell, xOffset, yOffset);
 						if (p.getPosition().equals(player.getPosition()) && hasNotRoared) {
 							SoundSource.play(p, SoundSource.ANGRY, activity);
 							new SoundSource(player, SoundSource.PAIN, activity);

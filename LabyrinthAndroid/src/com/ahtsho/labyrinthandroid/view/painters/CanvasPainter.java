@@ -4,9 +4,11 @@ import java.util.HashMap;
 
 import tools.Tool;
 import infrastructure.Cell;
+import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.view.View;
 
 import com.ahtsho.labyrinthandroid.service.MetricsService;
 
@@ -14,10 +16,9 @@ import creatures.Creature;
 import creatures.Player;
 
 public class CanvasPainter extends Painter{
-
-
-	public CanvasPainter(HashMap<String, Paint> paints) {
-		super(paints);
+	
+	public CanvasPainter(Activity anActivity, View aView, HashMap<String, Paint> paints) {
+		super(anActivity, aView, paints);
 	}
 	
 	public static void drawCell(Canvas canvas, Cell cell, float xOffset, float yOffset, boolean showCoords){

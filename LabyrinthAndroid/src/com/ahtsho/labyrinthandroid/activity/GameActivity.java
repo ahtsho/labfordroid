@@ -11,10 +11,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.ahtsho.labyrinthandroid.R;
-import com.ahtsho.labyrinthandroid.service.SoundSource;
+import com.ahtsho.labyrinthandroid.util.ErrorLogger;
 import com.ahtsho.labyrinthandroid.view.LabyrinthView;
 
 
@@ -31,9 +30,8 @@ public class GameActivity extends Activity {
 		setPaints();		
 		try {
 			lab = Level.genLabyrinth();
-			System.out.println( "Player "+lab.getPlayer().getName());
 		} catch (Exception e) {
-			Log.e("GameActivity","Error:"+e.getMessage());
+			ErrorLogger.log(this, e, "");
 		}
 
 		setContentView(new LabyrinthView(this, paints,(Integer)getIntent().getExtras().get("player"),lab));

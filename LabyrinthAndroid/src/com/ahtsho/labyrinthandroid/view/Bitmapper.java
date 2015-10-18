@@ -1,5 +1,6 @@
 package com.ahtsho.labyrinthandroid.view;
 
+import infrastructure.Cell;
 import tools.*;
 
 import com.ahtsho.labyrinthandroid.R;
@@ -12,6 +13,9 @@ import creatures.Guard;
 import creatures.Player;
 
 public class Bitmapper {
+	
+	public static final int CELL_FLOOR = 0;
+	
 	public static Bitmap getBitmap(Player p, View v){
 		Bitmap playerBitmap = null;
 		if(p != null){
@@ -72,5 +76,62 @@ public class Bitmapper {
 		}
 		return creatureBitmap;
 	}
+	private static Bitmap westWall = null;
+	private static Bitmap eastWall = null;
+	private static Bitmap southWall = null;
+	private static Bitmap northWall = null;
+	private static Bitmap cellFloor = null;
+	public static Bitmap getBitmap(Cell cell, char direction, View view) {
+		Bitmap wall = null;
+		
+		if(westWall==null){
+			westWall = BitmapFactory.decodeResource(view.getResources(),R.drawable.hedge_v);
+		}
+		if(eastWall==null){
+			eastWall = BitmapFactory.decodeResource(view.getResources(),R.drawable.hedge_v);
+		}
+		if(southWall==null){
+			southWall = BitmapFactory.decodeResource(view.getResources(),R.drawable.hedge_h);
+		}
+		if(northWall==null){
+			northWall = BitmapFactory.decodeResource(view.getResources(),R.drawable.hedge_h);
+		}
+		
+		if(direction==Cell.WEST){
+			wall = westWall;
+		}else if(direction==Cell.EAST){
+			wall = eastWall;
+		}else if(direction==Cell.NORTH){
+			wall = northWall;
+		}else if(direction==Cell.SOUTH){
+			wall = southWall;
+		}
+		
+		return wall;
+	}
+	
+	public static Bitmap getBitmap(Cell cell, int part, View view) {
+		Bitmap image = null;
+		
+		if(cellFloor==null){
+			cellFloor = BitmapFactory.decodeResource(view.getResources(),R.drawable.grass_9);
+		}
+		
+		switch (part) {
+		case 0:
+			image = cellFloor;
+			break;
+		
+		
+		default:
+			break;
+		}
+		
+		
+		return image;
+	}
+	
+	
+	
 
 }
