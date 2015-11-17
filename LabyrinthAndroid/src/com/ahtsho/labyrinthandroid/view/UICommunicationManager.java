@@ -7,8 +7,10 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ahtsho.labyrinthandroid.R;
+import com.ahtsho.labyrinthandroid.service.GameService;
 import com.ahtsho.labyrinthandroid.service.SoundSource;
 
 public class UICommunicationManager {
@@ -80,5 +82,9 @@ public class UICommunicationManager {
 			System.out.println("Call requires API level 11");
 		}
 	}
-
+	public static void showLevelChangedMessage() {
+		CharSequence msg = "LEVEL " + GameService.getLevel();
+		Toast toast = Toast.makeText(activity, msg, Toast. LENGTH_LONG);
+		toast.show();
+	}
 }

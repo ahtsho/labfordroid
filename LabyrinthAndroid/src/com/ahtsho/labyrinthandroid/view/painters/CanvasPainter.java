@@ -6,6 +6,7 @@ import tools.Tool;
 import infrastructure.Cell;
 import android.app.Activity;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.View;
@@ -15,18 +16,19 @@ import com.ahtsho.labyrinthandroid.service.MetricsService;
 import creatures.Creature;
 import creatures.Player;
 
-public class CanvasPainter extends Painter{
-	
+public class CanvasPainter extends Painter {
+
 	public CanvasPainter(Activity anActivity, View aView, HashMap<String, Paint> paints) {
 		super(anActivity, aView, paints);
 	}
-	
-	public static void drawCell(Canvas canvas, Cell cell, float xOffset, float yOffset, boolean showCoords){
+
+	public static void drawCell(Canvas canvas, Cell cell, float xOffset, float yOffset, boolean showCoords) {
 		drawWestWall(canvas, cell, xOffset, yOffset, showCoords);
 		drawNorthWall(canvas, cell, xOffset, yOffset, showCoords);
 		drawSouthWall(canvas, cell, xOffset, yOffset, showCoords);
 		drawEastWall(canvas, cell, xOffset, yOffset, showCoords);
 	}
+
 	public static void drawWestWall(Canvas canvas, Cell cell, float xOffset, float yOffset, boolean showCoords) {
 		if (cell.isWest()) {
 			canvas.drawLine(MetricsService.getXFromCell(cell, xOffset), MetricsService.getYFromCell(cell, yOffset),
@@ -80,7 +82,8 @@ public class CanvasPainter extends Painter{
 		}
 	}
 
-	public static void drawPlayer(Canvas canvas, Cell cell,Player player, float xOffset, float yOffset, float xAnimiate, float yAnimiate,float zoom, boolean showCoords) {
+	public static void drawPlayer(Canvas canvas, Cell cell, Player player, float xOffset, float yOffset, float xAnimiate, float yAnimiate,
+			float zoom, boolean showCoords) {
 		if (player != null) {
 			if (player.getPosition().equals(cell)) {
 				canvas.drawCircle(MetricsService.getXOfCellCenter(cell, xOffset) + xAnimiate, MetricsService.getYOfCellCenter(cell, yOffset)
@@ -93,7 +96,7 @@ public class CanvasPainter extends Painter{
 		}
 	}
 
-	public static void drawCreatures(Canvas canvas, Cell cell, float xOffset, float yOffset,float xAnimiate, float yAnimiate,float zoom) {
+	public static void drawCreatures(Canvas canvas, Cell cell, float xOffset, float yOffset, float xAnimiate, float yAnimiate, float zoom) {
 		if (cell.getHosts().size() == 0 && cell.getTools().size() == 0) {
 		} else if (cell.getHosts().size() > 0) {
 			for (Creature p : cell.getHosts()) {
@@ -119,11 +122,15 @@ public class CanvasPainter extends Painter{
 			}
 		}
 	}
-	
+
 	public static void drawCoords(Canvas canvas, Cell cell, float xOffset, float yOffset, boolean showCoords) {
 		if (showCoords) {
 			canvas.drawText("[" + cell.getRow() + "," + cell.getCol() + "]", MetricsService.getXOfCellCenter(cell, 25 + xOffset),
 					MetricsService.getYOfCellCenter(cell, -5 + yOffset), paintText);
 		}
+	}
+
+	public static void drawBackGround(Canvas canvas) {
+		canvas.drawColor(Color.BLACK);
 	}
 }

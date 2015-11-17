@@ -6,9 +6,11 @@ import infrastructure.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.ahtsho.labyrinthandroid.service.AnimationManager;
+import com.ahtsho.labyrinthandroid.service.AnimationService;
+import com.ahtsho.labyrinthandroid.service.GameService;
 import com.ahtsho.labyrinthandroid.service.MetricsService;
 import com.ahtsho.labyrinthandroid.service.SoundSource;
+import com.ahtsho.labyrinthandroid.service.VibriationService;
 import com.ahtsho.labyrinthandroid.util.ErrorLogger;
 import com.ahtsho.labyrinthandroid.view.painters.BitmapPainter;
 import com.ahtsho.labyrinthandroid.view.painters.CanvasPainter;
@@ -31,12 +33,12 @@ import android.widget.Toast;
 public class LabyrinthView extends View {
 
 	
-	private static final int VIBRATION_TIME_MILLI = 100;
+	
 	private Labyrinth labyrinth;
 	private Player player = null;
 	private ArrayList<Cell> cells = null;
 	
-	private int level = 1;
+//	private int level = 1;
 	private boolean sameLevel = true;
 	
 	private char exitDirection = ' ';
@@ -47,23 +49,27 @@ public class LabyrinthView extends View {
 	private float yup = 0;
 	
 	private Activity mainActivity;
-	private Vibrator vb;
+	
 	
 	private boolean hasNotRoared = true;
 
 	public LabyrinthView(Context context, HashMap<String, Paint> paints, Integer playerRes, Labyrinth aLab) {
 		super(context);
 		mainActivity = (Activity) this.getContext();
+		
+		new Painter(mainActivity, this,paints);// constructor for Bitmap and Canvas painters
+		new VibriationService(mainActivity);
+		
 		labyrinth = aLab;
 		cells = labyrinth.getCells();
 		player = labyrinth.getPlayer();
 
 		BitmapPainter.setPlayerBitmap(Bitmapper.getBitmap(labyrinth.getPlayer(), this));
 
-		new Painter(mainActivity, this,paints);
+		
 		MetricsService.initializeCellDimension(context);
 		MetricsService.centerSmallLabyrinths(labyrinth.getDimension());
-		vb = (Vibrator) mainActivity.getSystemService(Context.VIBRATOR_SERVICE);
+		
 		// SoundSource.off();
 	}
 
@@ -71,7 +77,7 @@ public class LabyrinthView extends View {
 	protected void onDraw(Canvas canvas) {
 		UICommunicationManager.updateActionBar(this, labyrinth.getPlayer().getLife());
 		super.onDraw(canvas);
-		canvas.drawColor(Color.BLACK);
+		CanvasPainter.drawBackGround(canvas);
 
 		for (int i = 0; i < cells.size(); i++) {
 			if (labyrinth.getPlayer() != null) {
@@ -89,9 +95,9 @@ public class LabyrinthView extends View {
 	}
 
 	private void transitToNextLevelWithAnimation() {
-		AnimationManager.animate(exitDirection);
-		if(AnimationManager.animationEnded()) {
-			AnimationManager.reset();
+		AnimationService.animate(exitDirection);
+		if(AnimationService.animationEnded()) {
+			AnimationService.reset();
 			try {
 				goToNextLevel();
 			} catch (Exception e) {
@@ -102,26 +108,19 @@ public class LabyrinthView extends View {
 
 
 	private synchronized void drawCell(Canvas canvas, Cell cell, float xOffset, float yOffset, boolean showCoords) {		
-		if(isTutorial()){
-			System.out.println("TUTORIAL_LEVEL = "+level);
+		if(GameService.isTutorial()){
 			CanvasPainter.drawCell(canvas, cell, xOffset, yOffset, showCoords);
 			CanvasPainter.drawTools(canvas, cell, xOffset, yOffset);
-			CanvasPainter.drawCreatures(canvas, cell, xOffset, yOffset, AnimationManager.xAnimiate, AnimationManager.yAnimiate, AnimationManager.zoom);
-			CanvasPainter.drawPlayer(canvas, cell, labyrinth.getPlayer(), xOffset, yOffset, AnimationManager.xAnimiate, AnimationManager.yAnimiate, AnimationManager.zoom, showCoords);
+			CanvasPainter.drawCreatures(canvas, cell, xOffset, yOffset, AnimationService.xAnimiate, AnimationService.yAnimiate, AnimationService.zoom);
+			CanvasPainter.drawPlayer(canvas, cell, labyrinth.getPlayer(), xOffset, yOffset, AnimationService.xAnimiate, AnimationService.yAnimiate, AnimationService.zoom, showCoords);
 		} else {
-			System.out.println("REAL_LEVEL = "+level);
 			BitmapPainter.drawCell(canvas, cell, xOffset, yOffset, showCoords);
-			BitmapPainter.drawCreatures(canvas, cell, player, xOffset, yOffset, AnimationManager.xAnimiate, AnimationManager.yAnimiate, hasNotRoared);
+			BitmapPainter.drawCreatures(canvas, cell, player, xOffset, yOffset, AnimationService.xAnimiate, AnimationService.yAnimiate, hasNotRoared);
 			BitmapPainter.drawTools(canvas, cell, player, xOffset, yOffset);
 		}
 		CanvasPainter.drawCoords(canvas, cell, xOffset, yOffset, showCoords);
 	}
 
-
-	private boolean isTutorial() {
-		if(level == 1) return true;
-		return false;
-	}
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
@@ -136,19 +135,18 @@ public class LabyrinthView extends View {
 		if (event.getAction() == MotionEvent.ACTION_UP) {
 			xup = event.getX();
 			yup = event.getY();
-//			if (true) {
 				try {
 					Cell playerPosition = labyrinth.getPlayer().getPosition();
 					exitDirection = MetricsService.getDirectionFromPosition(xdown, ydown, xup, yup);
 					sameLevel = labyrinth.move(labyrinth.getPlayer(), exitDirection);
 					if (!sameLevel) {
-						AnimationManager.startAnimation();
+						AnimationService.startAnimation();
 						exitDirection = labyrinth.getExitCellWall();
 						new SoundSource(labyrinth.getPlayer(), SoundSource.EXIT, mainActivity);
 					} else {
 						if (labyrinth.getPlayer().getPosition().equals(playerPosition)) {
 
-							vb.vibrate(VIBRATION_TIME_MILLI);
+							VibriationService.vibrate();
 							new SoundSource(labyrinth.getPlayer(), SoundSource.BUMP, mainActivity);
 							new SoundSource(labyrinth.getPlayer(), SoundSource.PAIN, mainActivity);
 						}
@@ -158,22 +156,23 @@ public class LabyrinthView extends View {
 				}
 				return true;
 			}
-//		}
 		return false;
 	}
 
 	private void goToNextLevel() throws Exception {
-		level = Level.next();
-		CharSequence msg = "LEVEL " + level;
-		Toast toast = Toast.makeText(this.getContext(), msg, Toast. LENGTH_LONG);
-		toast.show();
+		GameService.setLevel(Level.next());
+		
+		UICommunicationManager.showLevelChangedMessage();
 
 		labyrinth = Level.genLabyrinth();
 		cells = labyrinth.getCells();
 		player.setPosition(labyrinth.getEntrance());
 		labyrinth.setPlayer(player);
+		
 		MetricsService.centerSmallLabyrinths(labyrinth.getDimension());
 	}
+
+	
 
 
 }
