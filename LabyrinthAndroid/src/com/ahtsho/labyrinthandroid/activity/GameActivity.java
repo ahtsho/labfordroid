@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import com.ahtsho.labyrinthandroid.R;
+import com.ahtsho.labyrinthandroid.service.SoundSource;
 import com.ahtsho.labyrinthandroid.util.ErrorLogger;
 import com.ahtsho.labyrinthandroid.view.LabyrinthView;
 
@@ -27,14 +28,15 @@ public class GameActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
+		SoundSource.playBackgroundMusic(this.getApplicationContext());
 		setPaints();		
 		try {
 			lab = Level.genLabyrinth();
 		} catch (Exception e) {
 			ErrorLogger.log(this, e, "");
 		}
-
-		setContentView(new LabyrinthView(this, paints,(Integer)getIntent().getExtras().get("player"),lab));
+		
+		setContentView(new LabyrinthView(this, paints,R.drawable.face1,lab));
 		setActionBar();
 	}
 

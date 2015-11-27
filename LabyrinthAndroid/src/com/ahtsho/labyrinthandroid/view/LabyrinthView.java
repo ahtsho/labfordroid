@@ -31,46 +31,29 @@ import android.widget.Toast;
 
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class LabyrinthView extends View {
-
-	
-	
 	private Labyrinth labyrinth;
 	private Player player = null;
-	private ArrayList<Cell> cells = null;
-	
-//	private int level = 1;
+	private ArrayList<Cell> cells = null;	
 	private boolean sameLevel = true;
-	
 	private char exitDirection = ' ';
-	
 	private float xdown = 0;
 	private float ydown = 0;
 	private float xup = 0;
 	private float yup = 0;
-	
 	private Activity mainActivity;
-	
-	
 	private boolean hasNotRoared = true;
 
 	public LabyrinthView(Context context, HashMap<String, Paint> paints, Integer playerRes, Labyrinth aLab) {
 		super(context);
 		mainActivity = (Activity) this.getContext();
-		
 		new Painter(mainActivity, this,paints);// constructor for Bitmap and Canvas painters
 		new VibriationService(mainActivity);
-		
 		labyrinth = aLab;
 		cells = labyrinth.getCells();
 		player = labyrinth.getPlayer();
-
 		BitmapPainter.setPlayerBitmap(Bitmapper.getBitmap(labyrinth.getPlayer(), this));
-
-		
 		MetricsService.initializeCellDimension(context);
 		MetricsService.centerSmallLabyrinths(labyrinth.getDimension());
-		
-		// SoundSource.off();
 	}
 
 	@Override
@@ -78,7 +61,6 @@ public class LabyrinthView extends View {
 		UICommunicationManager.updateActionBar(this, labyrinth.getPlayer().getLife());
 		super.onDraw(canvas);
 		CanvasPainter.drawBackGround(canvas);
-
 		for (int i = 0; i < cells.size(); i++) {
 			if (labyrinth.getPlayer() != null) {
 				MetricsService.shiftPlayerOnScreen(labyrinth.getPlayer().getPosition());
@@ -161,18 +143,12 @@ public class LabyrinthView extends View {
 
 	private void goToNextLevel() throws Exception {
 		GameService.setLevel(Level.next());
-		
-		UICommunicationManager.showLevelChangedMessage();
-
+		UICommunicationManager.showLevelChangedMessage(mainActivity);
 		labyrinth = Level.genLabyrinth();
 		cells = labyrinth.getCells();
 		player.setPosition(labyrinth.getEntrance());
 		labyrinth.setPlayer(player);
-		
 		MetricsService.centerSmallLabyrinths(labyrinth.getDimension());
 	}
-
-	
-
 
 }

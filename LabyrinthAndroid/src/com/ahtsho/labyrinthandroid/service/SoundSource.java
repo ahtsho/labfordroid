@@ -108,7 +108,7 @@ public class SoundSource {
 		if (audioOn) {
 			backgroubdMP = MediaPlayer.create(context, R.raw.basic_im_wearing_my_dancing_pants);
 			backgroubdMP.setLooping(true);
-			float volume = ((AudioManager) context.getSystemService(Context.AUDIO_SERVICE)).getStreamVolume(AudioManager.STREAM_MUSIC) * 0.01f;
+			float volume = ((AudioManager) context.getSystemService(Context.AUDIO_SERVICE)).getStreamVolume(AudioManager.STREAM_MUSIC) * 0.03f;
 			backgroubdMP.setVolume(volume, volume);
 			backgroubdMP.start();
 		}

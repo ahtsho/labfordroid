@@ -18,7 +18,7 @@ public class SplashActivity extends Activity {
 
 			@Override
 			public void run() {
-				Intent i = new Intent(SplashActivity.this, SettingsActivity.class);
+				Intent i = new Intent(SplashActivity.this, GameActivity.class);
 				startActivity(i);
 				finish();
 			}

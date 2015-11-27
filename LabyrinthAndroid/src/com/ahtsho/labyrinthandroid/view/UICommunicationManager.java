@@ -82,9 +82,12 @@ public class UICommunicationManager {
 			System.out.println("Call requires API level 11");
 		}
 	}
-	public static void showLevelChangedMessage() {
+	public static void showLevelChangedMessage(Activity anActivity) {
+		if (activity == null) {
+			activity = anActivity;
+		}
 		CharSequence msg = "LEVEL " + GameService.getLevel();
-		Toast toast = Toast.makeText(activity, msg, Toast. LENGTH_LONG);
+		Toast toast = Toast.makeText(activity, msg, Toast.LENGTH_LONG);
 		toast.show();
 	}
 }
