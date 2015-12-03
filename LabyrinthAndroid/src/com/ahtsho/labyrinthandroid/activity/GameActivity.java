@@ -7,6 +7,8 @@ import infrastructure.*;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
@@ -22,11 +24,18 @@ import com.ahtsho.labyrinthandroid.view.LabyrinthView;
 public class GameActivity extends Activity {
 	private Labyrinth lab = null;
 	private HashMap<String, Paint> paints = new HashMap<String, Paint>();
-
+	private Context base;
+	
+	public void restartGame(){
+		Intent i = new Intent(GameActivity.this, SplashActivity.class);
+		startActivity(i);
+		finish();
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		base = getBaseContext();
 		setContentView(R.layout.activity_game);
 		SoundSource.playBackgroundMusic(this.getApplicationContext());
 		setPaints();		

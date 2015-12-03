@@ -15,5 +15,9 @@
 	<string name="player_2_name">Nadine</string>
 	<string name="player_3_name">Ettorino</string>
 	<string name="player_4_name">Aster</string>
-	<string name="toolbar_text">Life</string>
+	<string name="toolbar_text_life">Life</string>
+	<string name="toolbar_text_level">Level</string>
+	<string name="alert_game_over">Game Over</string>
+	<string name="alert_restart">Restart</string>
+	<string name="alert_quit">Quit</string>
 </resources>

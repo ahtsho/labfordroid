@@ -2,10 +2,8 @@ package com.ahtsho.labyrinthandroid.view;
 
 import game.Level;
 import infrastructure.*;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.concurrent.CopyOnWriteArrayList;
 import com.ahtsho.labyrinthandroid.service.AnimationService;
 import com.ahtsho.labyrinthandroid.service.GameService;
 import com.ahtsho.labyrinthandroid.service.MetricsService;
@@ -15,25 +13,21 @@ import com.ahtsho.labyrinthandroid.util.ErrorLogger;
 import com.ahtsho.labyrinthandroid.view.painters.BitmapPainter;
 import com.ahtsho.labyrinthandroid.view.painters.CanvasPainter;
 import com.ahtsho.labyrinthandroid.view.painters.Painter;
-
 import creatures.Player;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
-import android.os.Vibrator;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class LabyrinthView extends View {
 	private Labyrinth labyrinth;
 	private Player player = null;
-	private ArrayList<Cell> cells = null;	
+	private CopyOnWriteArrayList<Cell> cells = null;	
 	private boolean sameLevel = true;
 	private char exitDirection = ' ';
 	private float xdown = 0;
@@ -41,7 +35,6 @@ public class LabyrinthView extends View {
 	private float xup = 0;
 	private float yup = 0;
 	private Activity mainActivity;
-	private boolean hasNotRoared = true;
 
 	public LabyrinthView(Context context, HashMap<String, Paint> paints, Integer playerRes, Labyrinth aLab) {
 		super(context);
@@ -51,6 +44,7 @@ public class LabyrinthView extends View {
 		labyrinth = aLab;
 		cells = labyrinth.getCells();
 		player = labyrinth.getPlayer();
+		player.setAction(new SoundSource(mainActivity));
 		BitmapPainter.setPlayerBitmap(Bitmapper.getBitmap(labyrinth.getPlayer(), this));
 		MetricsService.initializeCellDimension(context);
 		MetricsService.centerSmallLabyrinths(labyrinth.getDimension());
@@ -97,7 +91,7 @@ public class LabyrinthView extends View {
 			CanvasPainter.drawPlayer(canvas, cell, labyrinth.getPlayer(), xOffset, yOffset, AnimationService.xAnimiate, AnimationService.yAnimiate, AnimationService.zoom, showCoords);
 		} else {
 			BitmapPainter.drawCell(canvas, cell, xOffset, yOffset, showCoords);
-			BitmapPainter.drawCreatures(canvas, cell, player, xOffset, yOffset, AnimationService.xAnimiate, AnimationService.yAnimiate, hasNotRoared);
+			BitmapPainter.drawCreatures(canvas, cell, player, xOffset, yOffset, AnimationService.xAnimiate, AnimationService.yAnimiate);
 			BitmapPainter.drawTools(canvas, cell, player, xOffset, yOffset);
 		}
 		CanvasPainter.drawCoords(canvas, cell, xOffset, yOffset, showCoords);
@@ -121,17 +115,19 @@ public class LabyrinthView extends View {
 					Cell playerPosition = labyrinth.getPlayer().getPosition();
 					exitDirection = MetricsService.getDirectionFromPosition(xdown, ydown, xup, yup);
 					sameLevel = labyrinth.move(labyrinth.getPlayer(), exitDirection);
+					SoundSource.creatureHasProducedSound = false;
+					SoundSource.toolHasProducedSound = false;
 					if (!sameLevel) {
 						AnimationService.startAnimation();
 						exitDirection = labyrinth.getExitCellWall();
 						new SoundSource(labyrinth.getPlayer(), SoundSource.EXIT, mainActivity);
 					} else {
 						if (labyrinth.getPlayer().getPosition().equals(playerPosition)) {
-
 							VibriationService.vibrate();
 							new SoundSource(labyrinth.getPlayer(), SoundSource.BUMP, mainActivity);
-							new SoundSource(labyrinth.getPlayer(), SoundSource.PAIN, mainActivity);
+//							new SoundSource(labyrinth.getPlayer(), SoundSource.PAIN, mainActivity);
 						}
+							
 					}
 				} catch (Exception e) {
 					ErrorLogger.log(this, e, "");

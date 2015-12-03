@@ -23,12 +23,14 @@ public class UICommunicationManager {
 
 	private static android.content.DialogInterface.OnClickListener createQuitDialog() {
 		if (quitClickListener == null) {
-			System.out.println("quitClickListener creating");
 			quitClickListener = new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					new SoundSource(SoundSource.SYSTEM_STATUS_END_GAME, activity);
-					activity.finish();
+					new SoundSource(SoundSource.SYSTEM_STATUS_END_GAME,
+							activity);
+//					activity.finish();
+//					Process.killProcess(Process.myPid());
+					System.exit(2);
 				}
 			};
 		}
@@ -38,14 +40,15 @@ public class UICommunicationManager {
 	@SuppressLint("NewApi")
 	private static android.content.DialogInterface.OnClickListener createRestartDialog() {
 		if (restartClickListener == null) {
-			System.out.println("restartClickListener creating");
 			restartClickListener = new DialogInterface.OnClickListener() {
 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					Level.goTo(-(Level.currentLevel - 3));
-					new SoundSource(SoundSource.SYSTEM_STATUS_RESTART_GAME, activity);
-					activity.recreate();
+					new SoundSource(SoundSource.SYSTEM_STATUS_RESTART_GAME,
+							activity);
+//					activity.recreate();
+					
 				}
 			};
 		}
@@ -58,35 +61,44 @@ public class UICommunicationManager {
 		if (activity == null) {
 			activity = anActivity;
 		}
-		if (alertDialogBuilder == null) {
-			System.out.println("alertDialogBuilder created");
-			alertDialogBuilder = new AlertDialog.Builder(activity);
-			alertDialogBuilder.setMessage("GAME OVER");
-			alertDialogBuilder.setPositiveButton("Restart", createRestartDialog());
-			alertDialogBuilder.setNegativeButton("Quit", createQuitDialog());
+		if (activity != null) {
+			if (alertDialogBuilder == null) {
+				alertDialogBuilder = new AlertDialog.Builder(activity);
+				alertDialogBuilder.setMessage(R.string.alert_game_over);
+				alertDialogBuilder.setPositiveButton(R.string.alert_restart,
+						createRestartDialog());
+				alertDialogBuilder
+						.setNegativeButton(R.string.alert_quit, createQuitDialog());
+			}
+			alertDialogBuilder.create();
+			if (alertDialog == null) {
+				alertDialog = alertDialogBuilder.create();
+			}
+			alertDialog.show();
+			SoundSource.stopBackgoundMusic();
+			SoundSource.play(SoundSource.SYSTEM_STATUS_GAME_OVER, activity);
 		}
-		alertDialogBuilder.create();
-		if (alertDialog == null) {
-			alertDialog = alertDialogBuilder.create();
-		}
-		alertDialog.show();
-		SoundSource.stopBackgoundMusic();
-		SoundSource.play(SoundSource.SYSTEM_STATUS_GAME_OVER, activity);
 
 	}
 
 	public static void updateActionBar(View view, float playerLife) {
 		try {
-			((TextView) view.getRootView().findViewById(R.id.title_bar_text)).setText(" " + playerLife);
+			//replace text with R.string.toolbar_text_level
+			((TextView) view.getRootView().findViewById(R.id.title_bar_text))
+					.setText(" " + playerLife);
 		} catch (Exception e) {
 			System.out.println("Call requires API level 11");
 		}
+		
+		((TextView) view.getRootView().findViewById(R.id.title_bar_level))
+		.setText(GameService.getLevelName());
 	}
+
 	public static void showLevelChangedMessage(Activity anActivity) {
 		if (activity == null) {
 			activity = anActivity;
 		}
-		CharSequence msg = "LEVEL " + GameService.getLevel();
+		CharSequence msg = GameService.getLevelName();
 		Toast toast = Toast.makeText(activity, msg, Toast.LENGTH_LONG);
 		toast.show();
 	}

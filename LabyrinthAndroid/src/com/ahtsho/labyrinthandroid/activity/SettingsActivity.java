@@ -20,31 +20,22 @@ import android.widget.Toast;
 public class SettingsActivity extends Activity {
 	private int chosenPlayer = 0;
 	private String name = "";
-//MediaPlayer mp = null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
+		super.onCreate(savedInstanceState);	
 		setContentView(R.layout.activity_settings);
 		SoundSource.playBackgroundMusic(this.getApplicationContext());
-//		mp = MediaPlayer.create(this.getApplicationContext(), R.raw.basic_im_wearing_my_dancing_pants);
-//		mp.setLooping(true);
-//		float volume= ((AudioManager) getSystemService(AUDIO_SERVICE)).getStreamVolume(AudioManager.STREAM_MUSIC) * 0.01f;
-//		mp.setVolume(volume, volume);
-//		mp.start();
-		
 		handlePlayerChoice(R.id.imageButton1,R.drawable.face1,R.id.editText_player_1);
 		handlePlayerChoice(R.id.imageButton2,R.drawable.face2,R.id.editText_player_2);
 		handlePlayerChoice(R.id.imageButton3,R.drawable.face3,R.id.editText_player_3);
 		handlePlayerChoice(R.id.imageButton4,R.drawable.face4,R.id.editText_player_4);
 		
-		
 		Button play = (Button) findViewById(R.id.button1);
 		play.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent gameIntent = new Intent(SettingsActivity.this,
-						GameActivity.class);
+				Intent gameIntent = new Intent(SettingsActivity.this,GameActivity.class);
 				
 				gameIntent.putExtra("player", chosenPlayer);//player_1_name.getText()
 				gameIntent.putExtra("name", name);

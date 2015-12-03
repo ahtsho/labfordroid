@@ -2,9 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main_title_bar_layout"
     android:layout_width="match_parent"
-    android:layout_height="50dp" >
+    android:layout_height="50dp"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp" >
 
-    <ImageView
+	<ImageView
         android:id="@+id/title_bar_image"
         android:layout_width="30dp"
         android:layout_height="30dp"
@@ -16,10 +18,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/title_bar_image"
-        android:textAllCaps="true"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#fff"
         android:textStyle="bold" />
 
+    <TextView
+        android:id="@+id/title_bar_level"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/title_bar_image"
+        android:layout_alignParentRight="true"
+        android:text="TextView" 
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#fff"
+        android:textStyle="bold" />
     
 </RelativeLayout>

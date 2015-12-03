@@ -19,6 +19,8 @@ public class MetricsService {
 	public static float CELL_HEIGHT = 300;
 	public static float LEFT_MARGIN = 30;
 	public static float TOP_MARGIN = 0;
+	public static float LEFT_MARGIN_TOOL = 60;
+	public static float TOP_MARGIN_TOOL = 50;
 	public static final double ZOOM_FACTOR = 0.3;
 	
 	public static float xOffset = 0;
