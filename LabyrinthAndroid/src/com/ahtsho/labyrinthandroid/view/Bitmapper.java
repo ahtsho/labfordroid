@@ -110,6 +110,10 @@ public class Bitmapper {
 		return wall;
 	}
 	
+	public static Bitmap getBitmap(View view) {
+		return BitmapFactory.decodeResource(view.getResources(),R.drawable.finger);
+	}
+	
 	public static Bitmap getBitmap(Cell cell, int part, View view) {
 		Bitmap image = null;
 		

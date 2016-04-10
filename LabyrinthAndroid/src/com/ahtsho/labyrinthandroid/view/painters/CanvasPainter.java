@@ -11,6 +11,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.View;
 
+import com.ahtsho.labyrinthandroid.service.GameService;
 import com.ahtsho.labyrinthandroid.service.MetricsService;
 
 import creatures.Creature;
@@ -132,5 +133,16 @@ public class CanvasPainter extends Painter {
 
 	public static void drawBackGround(Canvas canvas) {
 		canvas.drawColor(Color.BLACK);
+	}
+
+	public static void drawGuideFinge(Canvas canvas, Cell cell, Player player,
+			float xOffset, float yOffset, float xAnimiate, float yAnimiate) {
+		if (player != null && GameService.isTutorial()) {
+			if (player.getPosition().equals(cell)) {
+				BitmapPainter.drawTutorialGuideFinger(canvas, cell, xOffset,yOffset,xAnimiate,yAnimiate);
+				
+			}
+		}
+		
 	}
 }

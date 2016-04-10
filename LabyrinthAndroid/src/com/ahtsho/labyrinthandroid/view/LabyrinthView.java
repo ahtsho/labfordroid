@@ -2,8 +2,10 @@ package com.ahtsho.labyrinthandroid.view;
 
 import game.Level;
 import infrastructure.*;
+
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+
 import com.ahtsho.labyrinthandroid.service.AnimationService;
 import com.ahtsho.labyrinthandroid.service.GameService;
 import com.ahtsho.labyrinthandroid.service.MetricsService;
@@ -13,6 +15,7 @@ import com.ahtsho.labyrinthandroid.util.ErrorLogger;
 import com.ahtsho.labyrinthandroid.view.painters.BitmapPainter;
 import com.ahtsho.labyrinthandroid.view.painters.CanvasPainter;
 import com.ahtsho.labyrinthandroid.view.painters.Painter;
+
 import creatures.Player;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -48,8 +51,9 @@ public class LabyrinthView extends View {
 		BitmapPainter.setPlayerBitmap(Bitmapper.getBitmap(labyrinth.getPlayer(), this));
 		MetricsService.initializeCellDimension(context);
 		MetricsService.centerSmallLabyrinths(labyrinth.getDimension());
+		AnimationService.starthandAnimation();
 	}
-
+public static boolean animateHand = true;
 	@Override
 	protected void onDraw(Canvas canvas) {
 		UICommunicationManager.updateActionBar(this, labyrinth.getPlayer().getLife());
@@ -62,14 +66,35 @@ public class LabyrinthView extends View {
 			drawCell(canvas, cells.get(i), MetricsService.getStartingX(), MetricsService.getStartingY(), false);
 			transitToNextLevelWithAnimation();
 		}
-
+		
+		CanvasPainter.drawGuideFinge(canvas, labyrinth.getPlayer().getPosition(), labyrinth.getPlayer(), MetricsService.getStartingX(), MetricsService.getStartingY(),
+				AnimationService.xAnimiateHand, AnimationService.yAnimiateHand);
+		if(GameService.isTutorial()){
+			try {
+				animateHand(labyrinth.getPlayer().getPosition().getFirstOpenWallNSWE());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
 		if (player.getLife() == 0) {
 			UICommunicationManager.showGameOverAlertDialog(mainActivity);
 		} else {
 			invalidate();
 		}
 	}
-
+	private void animateHand(char wall) {
+		AnimationService.animateHand(wall);
+		if(AnimationService.handAnimationEnded()) {
+			AnimationService.resetHand();
+		}
+		AnimationService.starthandAnimation();
+		AnimationService.animateHand(wall);
+		if(AnimationService.handAnimationEnded()) {
+			AnimationService.resetHand();
+		}
+	}
+	
 	private void transitToNextLevelWithAnimation() {
 		AnimationService.animate(exitDirection);
 		if(AnimationService.animationEnded()) {

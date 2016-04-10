@@ -1,12 +1,10 @@
 package com.ahtsho.labyrinthandroid.view.painters;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import tools.Tool;
 import infrastructure.Cell;
-import interfaces.Good;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -183,17 +181,6 @@ public class BitmapPainter extends Painter {
 		} else if (cell.getTools().size() > 0) {
 			for (Tool t : cell.getTools()) {
 				drawBitmapTool(view, t, canvas, cell, xOffset, yOffset);
-//				if (cell.equals(player.getPosition())) {
-//					System.out.println("MUSIKA: FOR TOOL "+t.getName()+" toolHasProdSound="+SoundSource.toolHasProducedSound);
-//					if (!SoundSource.toolHasProducedSound) {
-//						if (t instanceof Good) {
-//							new SoundSource(player, SoundSource.HAPPY, activity);
-//						} else {
-//							new SoundSource(player, SoundSource.PAIN, activity);
-//						}
-//						SoundSource.toolHasProducedSound = true;
-//					}
-//				}
 			}
 		}
 	}
@@ -220,6 +207,16 @@ public class BitmapPainter extends Painter {
 				}
 			}
 		}
+	}
+	
+	
+	public static void drawTutorialGuideFinger(Canvas canvas, Cell cell,
+			float xOffset, float yOffset, float xAnimiate,
+			float yAnimiate) {
+		canvas.drawBitmap(Bitmapper.getBitmap(view),
+				MetricsService.getXOfCellCenter(cell, xOffset)-40+xAnimiate,
+				MetricsService.getYOfCellCenter(cell, yOffset)+yAnimiate, paintPlayer);
+
 	}
 
 }

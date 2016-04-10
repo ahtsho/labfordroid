@@ -5,11 +5,13 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ahtsho.labyrinthandroid.R;
+import com.ahtsho.labyrinthandroid.activity.GameActivity;
 import com.ahtsho.labyrinthandroid.service.GameService;
 import com.ahtsho.labyrinthandroid.service.SoundSource;
 
@@ -48,7 +50,9 @@ public class UICommunicationManager {
 					new SoundSource(SoundSource.SYSTEM_STATUS_RESTART_GAME,
 							activity);
 //					activity.recreate();
-					
+					Intent myIntent = new Intent(activity, GameActivity.class);
+					myIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);	
+					activity.startActivity(myIntent);
 				}
 			};
 		}
