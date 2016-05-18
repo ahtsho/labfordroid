@@ -210,13 +210,21 @@ public class BitmapPainter extends Painter {
 	}
 	
 	
-	public static void drawTutorialGuideFinger(Canvas canvas, Cell cell,
+	public static void drawGuideHand(Canvas canvas, Cell cell,
 			float xOffset, float yOffset, float xAnimiate,
-			float yAnimiate) {
-		canvas.drawBitmap(Bitmapper.getBitmap(view),
+			float yAnimiate, boolean finished) {
+		if(!finished){
+			canvas.drawBitmap(Bitmapper.getBitmap(true, finished, view),
 				MetricsService.getXOfCellCenter(cell, xOffset)-40+xAnimiate,
 				MetricsService.getYOfCellCenter(cell, yOffset)+yAnimiate, paintPlayer);
+		} else {
+			canvas.drawBitmap(Bitmapper.getBitmap(true, finished, view),
+					MetricsService.getXOfScreenCenter()-(MetricsService.getXOfScreenCenter()/3),
+					MetricsService.getYOfScreenCenter()-(MetricsService.getYOfScreenCenter()/3), paintPlayer);
+		}
 
 	}
+	
+
 
 }

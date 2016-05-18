@@ -110,7 +110,10 @@ public class Bitmapper {
 		return wall;
 	}
 	
-	public static Bitmap getBitmap(View view) {
+	public static Bitmap getBitmap(boolean tutorial, boolean finished, View view) {
+		if(finished){
+			return BitmapFactory.decodeResource(view.getResources(),R.drawable.ok);
+		}
 		return BitmapFactory.decodeResource(view.getResources(),R.drawable.finger);
 	}
 	

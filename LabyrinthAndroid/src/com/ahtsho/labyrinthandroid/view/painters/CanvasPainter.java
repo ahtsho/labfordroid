@@ -135,13 +135,10 @@ public class CanvasPainter extends Painter {
 		canvas.drawColor(Color.BLACK);
 	}
 
-	public static void drawGuideFinge(Canvas canvas, Cell cell, Player player,
-			float xOffset, float yOffset, float xAnimiate, float yAnimiate) {
-		if (player != null && GameService.isTutorial()) {
-			if (player.getPosition().equals(cell)) {
-				BitmapPainter.drawTutorialGuideFinger(canvas, cell, xOffset,yOffset,xAnimiate,yAnimiate);
-				
-			}
+	public static void drawGuideHand(Canvas canvas, Cell cell, Player player,
+			float xOffset, float yOffset, float xAnimiate, float yAnimiate, boolean finished) {
+		if (player != null && player.getPosition().equals(cell)) {
+			BitmapPainter.drawGuideHand(canvas, cell, xOffset,yOffset,xAnimiate,yAnimiate, finished);
 		}
 		
 	}

@@ -10,7 +10,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -45,7 +47,7 @@ public class GameActivity extends Activity {
 			ErrorLogger.log(this, e, "");
 		}
 		
-		setContentView(new LabyrinthView(this, paints,R.drawable.face1,lab));
+		setContentView(new LabyrinthView(this, paints,R.drawable.face1,lab,Level.getPath()));
 		setActionBar();
 	}
 
@@ -66,8 +68,11 @@ public class GameActivity extends Activity {
 		
 		Paint paintBroken = new Paint();
 		paintBroken.setColor(Color.GRAY);
-		paintBroken.setStrokeWidth(3);
-		paintBroken.setStyle(Paint.Style.FILL_AND_STROKE);
+		paintBroken.setStrokeWidth(1);
+//		paintBroken.setAntiAlias(true);
+//		paintBroken.setDither(true);
+		paintBroken.setStyle(Paint.Style.STROKE);
+		paintBroken.setPathEffect(new DashPathEffect(new float[]{ 20, 30, 20}, 0));
 		paints.put("empry_wall", paintBroken);
 		
 		Paint playerPaint = new Paint();

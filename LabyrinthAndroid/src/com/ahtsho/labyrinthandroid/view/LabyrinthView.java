@@ -3,6 +3,7 @@ package com.ahtsho.labyrinthandroid.view;
 import game.Level;
 import infrastructure.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -38,8 +39,12 @@ public class LabyrinthView extends View {
 	private float xup = 0;
 	private float yup = 0;
 	private Activity mainActivity;
-
-	public LabyrinthView(Context context, HashMap<String, Paint> paints, Integer playerRes, Labyrinth aLab) {
+	private ArrayList<Cell> path = null;
+	private int pathCurrCellIdx = 0;
+	private boolean tutorialFinished = false;
+//	private static boolean animateHand = true;
+	
+	public LabyrinthView(Context context, HashMap<String, Paint> paints, Integer playerRes, Labyrinth aLab, ArrayList<Cell> path) {
 		super(context);
 		mainActivity = (Activity) this.getContext();
 		new Painter(mainActivity, this,paints);// constructor for Bitmap and Canvas painters
@@ -47,13 +52,15 @@ public class LabyrinthView extends View {
 		labyrinth = aLab;
 		cells = labyrinth.getCells();
 		player = labyrinth.getPlayer();
+		this.path = path;
 		player.setAction(new SoundSource(mainActivity));
 		BitmapPainter.setPlayerBitmap(Bitmapper.getBitmap(labyrinth.getPlayer(), this));
 		MetricsService.initializeCellDimension(context);
 		MetricsService.centerSmallLabyrinths(labyrinth.getDimension());
 		AnimationService.starthandAnimation();
 	}
-public static boolean animateHand = true;
+	
+	
 	@Override
 	protected void onDraw(Canvas canvas) {
 		UICommunicationManager.updateActionBar(this, labyrinth.getPlayer().getLife());
@@ -67,13 +74,12 @@ public static boolean animateHand = true;
 			transitToNextLevelWithAnimation();
 		}
 		
-		CanvasPainter.drawGuideFinge(canvas, labyrinth.getPlayer().getPosition(), labyrinth.getPlayer(), MetricsService.getStartingX(), MetricsService.getStartingY(),
-				AnimationService.xAnimiateHand, AnimationService.yAnimiateHand);
-		if(GameService.isTutorial()){
-			try {
-				animateHand(labyrinth.getPlayer().getPosition().getFirstOpenWallNSWE());
-			} catch (Exception e) {
-				e.printStackTrace();
+		if(GameService.isTutorial() && pathCurrCellIdx < path.size()){
+			CanvasPainter.drawGuideHand(canvas, labyrinth.getPlayer().getPosition(), labyrinth.getPlayer(), MetricsService.getStartingX(), MetricsService.getStartingY(),
+				AnimationService.xAnimiateHand, AnimationService.yAnimiateHand,tutorialFinished);
+			
+			if(!tutorialFinished){
+				animateHand(getDoorToNextCell(path.get(pathCurrCellIdx)));
 			}
 		}
 		
@@ -82,6 +88,20 @@ public static boolean animateHand = true;
 		} else {
 			invalidate();
 		}
+	}
+	private char getDoorToNextCell(Cell currCell) {
+		char direction = 0;
+		int pathNextCellIdx = pathCurrCellIdx+1;
+		if(labyrinth.getCellForDirection(currCell, Cell.NORTH)!=null && labyrinth.getCellForDirection(currCell, Cell.NORTH).equals(path.get(pathNextCellIdx))){
+			direction = Cell.NORTH;
+		}else if(labyrinth.getCellForDirection(currCell, Cell.EAST)!=null && labyrinth.getCellForDirection(currCell, Cell.EAST).equals(path.get(pathNextCellIdx))){
+			direction = Cell.EAST;
+		}else if(labyrinth.getCellForDirection(currCell, Cell.SOUTH)!=null && labyrinth.getCellForDirection(currCell, Cell.SOUTH).equals(path.get(pathNextCellIdx))){
+			direction = Cell.SOUTH;
+		}else if(labyrinth.getCellForDirection(currCell, Cell.WEST)!= null && labyrinth.getCellForDirection(currCell, Cell.WEST).equals(path.get(pathNextCellIdx))){
+			direction = Cell.WEST;
+		}
+		return direction;
 	}
 	private void animateHand(char wall) {
 		AnimationService.animateHand(wall);
@@ -143,6 +163,7 @@ public static boolean animateHand = true;
 					SoundSource.creatureHasProducedSound = false;
 					SoundSource.toolHasProducedSound = false;
 					if (!sameLevel) {
+						tutorialFinished = true;
 						AnimationService.startAnimation();
 						exitDirection = labyrinth.getExitCellWall();
 						new SoundSource(labyrinth.getPlayer(), SoundSource.EXIT, mainActivity);
@@ -151,6 +172,8 @@ public static boolean animateHand = true;
 							VibriationService.vibrate();
 							new SoundSource(labyrinth.getPlayer(), SoundSource.BUMP, mainActivity);
 //							new SoundSource(labyrinth.getPlayer(), SoundSource.PAIN, mainActivity);
+						} else {
+							pathCurrCellIdx++;// has moved 
 						}
 							
 					}

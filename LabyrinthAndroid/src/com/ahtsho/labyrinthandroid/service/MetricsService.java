@@ -15,7 +15,7 @@ public class MetricsService {
 	public static final int WALL_THICKNESS_LEFT = 25;
 	public static float screenWidth = 0;
 	public static float screenHeight = 0;
-	public static float CELL_WIDTH = 300;// make di
+	public static float CELL_WIDTH = 300;
 	public static float CELL_HEIGHT = 300;
 	public static float LEFT_MARGIN = 30;
 	public static float TOP_MARGIN = 0;
@@ -140,5 +140,15 @@ public class MetricsService {
 			leftScreenPadding = (screenWidth - labyrinthDimension * CELL_WIDTH) / 2;
 		}
 	}
+	
+	public static float getXOfScreenCenter(){
+		return screenWidth / 2;
+	}
+	
+	public static float getYOfScreenCenter(){
+		return screenHeight / 2;
+	}
+	
+	
 
 }
