@@ -7,15 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.ahtsho.labyrinthandroid.service.AnimationService;
-import com.ahtsho.labyrinthandroid.service.GameService;
-import com.ahtsho.labyrinthandroid.service.MetricsService;
-import com.ahtsho.labyrinthandroid.service.SoundSource;
-import com.ahtsho.labyrinthandroid.service.VibriationService;
+import com.ahtsho.labyrinthandroid.service.*;
 import com.ahtsho.labyrinthandroid.util.ErrorLogger;
-import com.ahtsho.labyrinthandroid.view.painters.BitmapPainter;
-import com.ahtsho.labyrinthandroid.view.painters.CanvasPainter;
-import com.ahtsho.labyrinthandroid.view.painters.Painter;
+import com.ahtsho.labyrinthandroid.view.painters.*;
 
 import creatures.Player;
 import android.annotation.TargetApi;
@@ -57,7 +51,7 @@ public class LabyrinthView extends View {
 		BitmapPainter.setPlayerBitmap(Bitmapper.getBitmap(labyrinth.getPlayer(), this));
 		MetricsService.initializeCellDimension(context);
 		MetricsService.centerSmallLabyrinths(labyrinth.getDimension());
-		AnimationService.starthandAnimation();
+		HandAnimationService.starthandAnimation();
 	}
 	
 	
@@ -76,7 +70,7 @@ public class LabyrinthView extends View {
 		
 		if(GameService.isTutorial() && pathCurrCellIdx < path.size()){
 			CanvasPainter.drawGuideHand(canvas, labyrinth.getPlayer().getPosition(), labyrinth.getPlayer(), MetricsService.getStartingX(), MetricsService.getStartingY(),
-				AnimationService.xAnimiateHand, AnimationService.yAnimiateHand,tutorialFinished);
+				HandAnimationService.xAnimiateHand, HandAnimationService.yAnimiateHand,tutorialFinished);
 			
 			if(!tutorialFinished){
 				animateHand(getDoorToNextCell(path.get(pathCurrCellIdx)));
@@ -105,21 +99,21 @@ public class LabyrinthView extends View {
 		return direction;
 	}
 	private void animateHand(char wall) {
-		AnimationService.animateHand(wall);
-		if(AnimationService.handAnimationEnded()) {
-			AnimationService.resetHand();
+		HandAnimationService.animate(wall);
+		if(HandAnimationService.animationEnded()) {
+			HandAnimationService.reset();
 		}
-		AnimationService.starthandAnimation();
-		AnimationService.animateHand(wall);
-		if(AnimationService.handAnimationEnded()) {
-			AnimationService.resetHand();
+		HandAnimationService.starthandAnimation();
+		HandAnimationService.animate(wall);
+		if(HandAnimationService.animationEnded()) {
+			HandAnimationService.reset();
 		}
 	}
 	
 	private void transitToNextLevelWithAnimation() {
-		AnimationService.animate(exitDirection);
-		if(AnimationService.animationEnded()) {
-			AnimationService.reset();
+		PlayerAnimationService.animate(exitDirection);
+		if(PlayerAnimationService.animationEnded()) {
+			PlayerAnimationService.reset();
 			try {
 				goToNextLevel();
 			} catch (Exception e) {
@@ -133,11 +127,11 @@ public class LabyrinthView extends View {
 		if(GameService.isTutorial()){
 			CanvasPainter.drawCell(canvas, cell, xOffset, yOffset, showCoords);
 			CanvasPainter.drawTools(canvas, cell, xOffset, yOffset);
-			CanvasPainter.drawCreatures(canvas, cell, xOffset, yOffset, AnimationService.xAnimiate, AnimationService.yAnimiate, AnimationService.zoom);
-			CanvasPainter.drawPlayer(canvas, cell, labyrinth.getPlayer(), xOffset, yOffset, AnimationService.xAnimiate, AnimationService.yAnimiate, AnimationService.zoom, showCoords);
+			CanvasPainter.drawCreatures(canvas, cell, xOffset, yOffset, PlayerAnimationService.xAnimiate, PlayerAnimationService.yAnimiate, PlayerAnimationService.zoom);
+			CanvasPainter.drawPlayer(canvas, cell, labyrinth.getPlayer(), xOffset, yOffset, PlayerAnimationService.xAnimiate, PlayerAnimationService.yAnimiate, PlayerAnimationService.zoom, showCoords);
 		} else {
 			BitmapPainter.drawCell(canvas, cell, xOffset, yOffset, showCoords);
-			BitmapPainter.drawCreatures(canvas, cell, player, xOffset, yOffset, AnimationService.xAnimiate, AnimationService.yAnimiate);
+			BitmapPainter.drawCreatures(canvas, cell, player, xOffset, yOffset, PlayerAnimationService.xAnimiate, PlayerAnimationService.yAnimiate);
 			BitmapPainter.drawTools(canvas, cell, player, xOffset, yOffset);
 		}
 		CanvasPainter.drawCoords(canvas, cell, xOffset, yOffset, showCoords);
@@ -165,7 +159,7 @@ public class LabyrinthView extends View {
 					SoundSource.toolHasProducedSound = false;
 					if (!sameLevel) {
 						tutorialFinished = true;
-						AnimationService.startAnimation();
+						PlayerAnimationService.startAnimation();
 						exitDirection = labyrinth.getExitCellWall();
 						new SoundSource(labyrinth.getPlayer(), SoundSource.EXIT, mainActivity);
 					} else {
