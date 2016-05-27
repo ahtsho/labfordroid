@@ -89,6 +89,7 @@ public class LabyrinthView extends View {
 			invalidate();
 		}
 	}
+	
 	private char getDoorToNextCell(Cell currCell) {
 		char direction = 0;
 		int pathNextCellIdx = pathCurrCellIdx+1;

@@ -49,11 +49,11 @@ public class Bitmapper {
 			if(c.getName()=="G3"){
 				creatureBitmap=BitmapFactory.decodeResource(v.getResources(),R.drawable.guard1);
 			} else if(c.getName()=="G5"){
-				creatureBitmap=BitmapFactory.decodeResource(v.getResources(),R.drawable.guard4);
-			} else if(c.getName()=="G8"){
 				creatureBitmap=BitmapFactory.decodeResource(v.getResources(),R.drawable.guard2);
-			} else if(c.getName()=="G9"){
+			} else if(c.getName()=="G8"){
 				creatureBitmap=BitmapFactory.decodeResource(v.getResources(),R.drawable.guard3);
+			} else if(c.getName()=="G9"){
+				creatureBitmap=BitmapFactory.decodeResource(v.getResources(),R.drawable.guard4);
 			} 
 		}
 		return creatureBitmap;

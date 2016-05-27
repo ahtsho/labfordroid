@@ -35,7 +35,7 @@ public class AnimationService {
 			if (direction == Cell.WEST)
 				xAnimiateHand -=HAND_ANIMIATION_STEP;
 			if (direction == Cell.EAST)
-				xAnimiate +=HAND_ANIMIATION_STEP;
+				xAnimiateHand +=HAND_ANIMIATION_STEP;
 		}
 	}
 	public static void resetHand() {
