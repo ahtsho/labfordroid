@@ -36,6 +36,7 @@ public class LabyrinthView extends View {
 	private ArrayList<Cell> path = null;
 	private int pathCurrCellIdx = 0;
 	private boolean tutorialFinished = false;
+	
 //	private static boolean animateHand = true;
 	
 	public LabyrinthView(Context context, HashMap<String, Paint> paints, Integer playerRes, Labyrinth aLab, ArrayList<Cell> path) {
@@ -64,8 +65,11 @@ public class LabyrinthView extends View {
 			if (labyrinth.getPlayer() != null) {
 				MetricsService.shiftPlayerOnScreen(labyrinth.getPlayer().getPosition());
 			}
-			drawCell(canvas, cells.get(i), MetricsService.getStartingX(), MetricsService.getStartingY(), false);
+			drawCell(canvas, cells.get(i), MetricsService.getStartingX(), MetricsService.getStartingY(), 0);
 			transitToNextLevelWithAnimation();
+			if(Player.fell){
+				transitToPrevLevelWithAnimation();
+			}
 		}
 		
 		if(GameService.isTutorial() && pathCurrCellIdx < path.size()){
@@ -83,7 +87,7 @@ public class LabyrinthView extends View {
 			invalidate();
 		}
 	}
-	
+
 	private char getDoorToNextCell(Cell currCell) {
 		char direction = 0;
 		int pathNextCellIdx = pathCurrCellIdx+1;
@@ -111,9 +115,9 @@ public class LabyrinthView extends View {
 	}
 	
 	private void transitToNextLevelWithAnimation() {
-		PlayerAnimationService.animate(exitDirection);
-		if(PlayerAnimationService.animationEnded()) {
-			PlayerAnimationService.reset();
+		PlayerAnimationService.slide(exitDirection);
+		if(PlayerAnimationService.animationEnded(PlayerAnimationService.Type.SLIDE)) {
+			PlayerAnimationService.reset(PlayerAnimationService.Type.SLIDE);
 			try {
 				goToNextLevel();
 			} catch (Exception e) {
@@ -122,35 +126,47 @@ public class LabyrinthView extends View {
 		}		
 	}
 
-
-	private synchronized void drawCell(Canvas canvas, Cell cell, float xOffset, float yOffset, boolean showCoords) {		
+	private void transitToPrevLevelWithAnimation() {
+		System.out.println("transit to prev level");
+		PlayerAnimationService.zoom(PlayerAnimationService.OUT);
+		if(PlayerAnimationService.animationEnded(PlayerAnimationService.Type.ZOOM)) {
+			System.out.println("animation ended");
+			PlayerAnimationService.reset(PlayerAnimationService.Type.ZOOM);
+			goToPrevLevel();
+		}		
+	}
+	
+	private synchronized void drawCell(Canvas canvas, Cell cell, float xOffset, float yOffset, float zoom) {		
 		if(GameService.isTutorial()){
-			CanvasPainter.drawCell(canvas, cell, xOffset, yOffset, showCoords);
+			CanvasPainter.drawCell(canvas, cell, xOffset, yOffset, zoom);
 			CanvasPainter.drawTools(canvas, cell, xOffset, yOffset);
-			CanvasPainter.drawCreatures(canvas, cell, xOffset, yOffset, PlayerAnimationService.xAnimiate, PlayerAnimationService.yAnimiate, PlayerAnimationService.zoom);
-			CanvasPainter.drawPlayer(canvas, cell, labyrinth.getPlayer(), xOffset, yOffset, PlayerAnimationService.xAnimiate, PlayerAnimationService.yAnimiate, PlayerAnimationService.zoom, showCoords);
+			CanvasPainter.drawCreatures(canvas, cell, xOffset, yOffset, 
+					PlayerAnimationService.xAnimiate, PlayerAnimationService.yAnimiate, PlayerAnimationService.zoom);
+			CanvasPainter.drawPlayer(canvas, cell, labyrinth.getPlayer(), xOffset, yOffset, 
+					PlayerAnimationService.xAnimiate, PlayerAnimationService.yAnimiate, PlayerAnimationService.zoom, false);
 		} else {
-			BitmapPainter.drawCell(canvas, cell, xOffset, yOffset, showCoords);
-			BitmapPainter.drawCreatures(canvas, cell, player, xOffset, yOffset, PlayerAnimationService.xAnimiate, PlayerAnimationService.yAnimiate);
+			BitmapPainter.drawCell(canvas, cell, xOffset, yOffset, zoom);
+			BitmapPainter.drawCreatures(canvas, cell, player, xOffset, yOffset,
+					PlayerAnimationService.xAnimiate, PlayerAnimationService.yAnimiate,PlayerAnimationService.zoom);
 			BitmapPainter.drawTools(canvas, cell, player, xOffset, yOffset);
 		}
-		CanvasPainter.drawCoords(canvas, cell, xOffset, yOffset, showCoords);
+//		CanvasPainter.drawCoords(canvas, cell, xOffset, yOffset, showCoords);
 	}
-
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		super.onTouchEvent(event);
-
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
 			xdown = event.getX();
 			ydown = event.getY();
 			return true;
 		}
+		
 
 		if (event.getAction() == MotionEvent.ACTION_UP) {
 			xup = event.getX();
 			yup = event.getY();
+		
 				try {
 					Cell playerPosition = labyrinth.getPlayer().getPosition();
 					exitDirection = MetricsService.getDirectionFromPosition(xdown, ydown, xup, yup);
@@ -170,6 +186,9 @@ public class LabyrinthView extends View {
 						} else {
 							pathCurrCellIdx++;// has moved 
 						}
+						if(Player.fell){
+							PlayerAnimationService.startAnimation();
+						}
 							
 					}
 				} catch (Exception e) {
@@ -177,6 +196,7 @@ public class LabyrinthView extends View {
 				}
 				return true;
 			}
+		
 		return false;
 	}
 
@@ -184,6 +204,23 @@ public class LabyrinthView extends View {
 		GameService.setLevel(Level.next());
 		UICommunicationManager.showLevelChangedMessage(mainActivity);
 		labyrinth = Level.genLabyrinth();
+		cells = labyrinth.getCells();
+		player.setPosition(labyrinth.getEntrance());
+		labyrinth.setPlayer(player);
+		MetricsService.centerSmallLabyrinths(labyrinth.getDimension());
+	}
+	
+	private void goToPrevLevel()  {
+		Player.fell=false;
+		System.out.println("Player.fell="+Player.fell);
+
+		UICommunicationManager.showLevelChangedMessage(mainActivity);
+		try {
+			labyrinth = Level.genLabyrinth();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		cells = labyrinth.getCells();
 		player.setPosition(labyrinth.getEntrance());
 		labyrinth.setPlayer(player);

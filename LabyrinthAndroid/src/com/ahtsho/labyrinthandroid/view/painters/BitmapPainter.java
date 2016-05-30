@@ -38,140 +38,139 @@ public class BitmapPainter extends Painter {
 	}
 
 	public static void drawCell(Canvas canvas, Cell cell, float xOffset,
-			float yOffset, boolean showCoords) {
-		drawBitmapCellFloor(canvas, cell, xOffset, yOffset);
-		drawBitmapWestWall(canvas, cell, xOffset, yOffset, showCoords);
-		drawBitmapNorthWall(canvas, cell, xOffset, yOffset, showCoords);
-		drawBitmapSouthWall(canvas, cell, xOffset, yOffset, showCoords);
-		drawBitmapEastWall(canvas, cell, xOffset, yOffset, showCoords);
+			float yOffset, float zoom) {
+		drawBitmapCellFloor(canvas, cell, xOffset, yOffset,zoom);
+		drawBitmapWestWall(canvas, cell, xOffset, yOffset, zoom);
+		drawBitmapNorthWall(canvas, cell, xOffset, yOffset, zoom);
+		drawBitmapSouthWall(canvas, cell, xOffset, yOffset, zoom);
+		drawBitmapEastWall(canvas, cell, xOffset, yOffset, zoom);
 	}
 
 	public static void drawBitmapCellFloor(Canvas canvas, Cell cell,
-			float xOffset, float yOffset) {
-		Rect dst = new Rect((int) MetricsService.getXFromCell(cell, xOffset),
-				(int) MetricsService.getYFromCell(cell, yOffset),
-				(int) MetricsService.getXFromNextCell(cell, xOffset),
-				(int) MetricsService.getYFormNextCell(cell, yOffset));
+			float xOffset, float yOffset, float zoom) {
+		Rect dst = new Rect((int) MetricsService.getXFromCell(cell, xOffset,-zoom),
+				(int) MetricsService.getYFromCell(cell, yOffset,-zoom),
+				(int) MetricsService.getXFromNextCell(cell, xOffset,zoom),
+				(int) MetricsService.getYFormNextCell(cell, yOffset,zoom));
 		canvas.drawBitmap(
 				Bitmapper.getBitmap(cell, Bitmapper.CELL_FLOOR, view), null,
 				dst, paintCell);
 	}
 
 	public static void drawBitmapEastWall(Canvas canvas, Cell cell,
-			float xOffset, float yOffset, boolean showCoords) {
+			float xOffset, float yOffset, float zoom) {
 		if (cell.isEast()) {
-			Rect dst = new Rect((int) MetricsService.getXFromNextCell(cell,
-					xOffset) - MetricsService.WALL_THICKNESS_LEFT,
-					(int) MetricsService.getYFromCell(cell, yOffset)
+			Rect dst = new Rect(
+					(int) MetricsService.getXFromNextCell(cell,xOffset,zoom) 
+							- MetricsService.WALL_THICKNESS_LEFT,
+					(int) MetricsService.getYFromCell(cell, yOffset,-zoom)
 							- MetricsService.WALL_THICKNESS_TOP,
-					(int) MetricsService.getXFromNextCell(cell, xOffset)
+					(int) MetricsService.getXFromNextCell(cell, xOffset,zoom)
 							+ MetricsService.WALL_THICKNESS_RIGHT,
-					(int) MetricsService.getYFormNextCell(cell, yOffset)
+					(int) MetricsService.getYFormNextCell(cell, yOffset,zoom)
 							+ MetricsService.WALL_THICKNESS_BOTTOM);
 
 			canvas.drawBitmap(Bitmapper.getBitmap(cell, Cell.EAST, view), null,
 					dst, paintCell);
 		}
-		if (showCoords) {
-		}
+		
 	}
 
 	public static void drawBitmapSouthWall(Canvas canvas, Cell cell,
-			float xOffset, float yOffset, boolean showCoords) {
+			float xOffset, float yOffset, float zoom) {
 		if (cell.isSouth()) {
 			Rect dst = new Rect(
-					(int) MetricsService.getXFromCell(cell, xOffset)
+					(int) MetricsService.getXFromCell(cell, xOffset,-zoom)
 							- MetricsService.WALL_THICKNESS_LEFT,
-					(int) MetricsService.getYFormNextCell(cell, yOffset)
+					(int) MetricsService.getYFormNextCell(cell, yOffset,zoom)
 							- MetricsService.WALL_THICKNESS_TOP,
-					(int) MetricsService.getXFromNextCell(cell, xOffset)
+					(int) MetricsService.getXFromNextCell(cell, xOffset,zoom)
 							+ MetricsService.WALL_THICKNESS_RIGHT,
-					(int) MetricsService.getYFormNextCell(cell, yOffset)
+					(int) MetricsService.getYFormNextCell(cell, yOffset,zoom)
 							+ MetricsService.WALL_THICKNESS_BOTTOM);
 
 			canvas.drawBitmap(Bitmapper.getBitmap(cell, Cell.SOUTH, view),
 					null, dst, paintCell);
 
 		}
-		if (showCoords) {
-		}
+		
 	}
 
 	public static void drawBitmapNorthWall(Canvas canvas, Cell cell,
-			float xOffset, float yOffset, boolean showCoords) {
+			float xOffset, float yOffset, float zoom) {
 		if (cell.isNorth()) {
 			Rect dst = new Rect(
-					(int) MetricsService.getXFromCell(cell, xOffset)
+					(int) MetricsService.getXFromCell(cell, xOffset,-zoom)
 							- MetricsService.WALL_THICKNESS_LEFT,
-					(int) MetricsService.getYFromCell(cell, yOffset)
+					(int) MetricsService.getYFromCell(cell, yOffset,-zoom)
 							- MetricsService.WALL_THICKNESS_TOP,
-					(int) MetricsService.getXFromNextCell(cell, xOffset)
+					(int) MetricsService.getXFromNextCell(cell, xOffset,zoom)
 							+ MetricsService.WALL_THICKNESS_RIGHT,
-					(int) MetricsService.getYFromCell(cell, yOffset)
+					(int) MetricsService.getYFromCell(cell, yOffset,-zoom)
 							+ MetricsService.WALL_THICKNESS_BOTTOM);
 			canvas.drawBitmap(Bitmapper.getBitmap(cell, Cell.NORTH, view),
 					null, dst, paintCell);
 		}
-		if (showCoords) {
-		}
+		
 	}
 
 	public static void drawBitmapWestWall(Canvas canvas, Cell cell,
-			float xOffset, float yOffset, boolean showCoords) {
+			float xOffset, float yOffset, float zoom) {
 		if (cell.isWest()) {
 
 			Rect dst = new Rect(
-					(int) MetricsService.getXFromCell(cell, xOffset)
+					(int) MetricsService.getXFromCell(cell, xOffset,-zoom)
 							- MetricsService.WALL_THICKNESS_LEFT,
-					(int) MetricsService.getYFromCell(cell, yOffset)
+					(int) MetricsService.getYFromCell(cell, yOffset,-zoom)
 							- MetricsService.WALL_THICKNESS_TOP,
-					(int) MetricsService.getXFromCell(cell, xOffset)
+					(int) MetricsService.getXFromCell(cell, xOffset,-zoom)
 							+ MetricsService.WALL_THICKNESS_RIGHT,
-					(int) MetricsService.getYFormNextCell(cell, yOffset)
+					(int) MetricsService.getYFormNextCell(cell, yOffset,zoom)
 							+ MetricsService.WALL_THICKNESS_BOTTOM);
 			canvas.drawBitmap(Bitmapper.getBitmap(cell, Cell.WEST, view), null,
 					dst, paintCell);
 		}
-		if (showCoords) {
-			canvas.drawText("W(" + MetricsService.getXFromCell(cell, xOffset)
-					+ "," + MetricsService.getYFromCell(cell, yOffset) + ")",
-					MetricsService.getXFromCell(cell, -10 + xOffset),
-					MetricsService.getYFromCell(cell, -30 + yOffset), paintText);
-			canvas.drawText("(" + MetricsService.getXFromCell(cell, xOffset)
-					+ "," + MetricsService.getYFormNextCell(cell, yOffset)
-					+ ")", MetricsService.getXFromCell(cell, -10 + xOffset),
-					MetricsService.getYFormNextCell(cell, 20 + yOffset),
-					paintText);
-		}
+	
 	}
 
 	public static void drawBitmapTool(View v, Tool t, Canvas canvas, Cell cell,
 			float xOffset, float yOffset) {
+		float zoom=0;
 		canvas.drawBitmap(Bitmapper.getBitmap(t, v),
-				MetricsService.getXFromCell(cell, xOffset)
+				MetricsService.getXFromCell(cell, xOffset,-zoom)
 						+ MetricsService.LEFT_MARGIN_TOOL,
-				MetricsService.getYFromCell(cell, yOffset)
+				MetricsService.getYFromCell(cell, yOffset,zoom)
 						+ MetricsService.TOP_MARGIN_TOOL, paintPlayer);
 
 	}
 
 	public static void drawBitmapCreature(View v, Creature c, Canvas canvas,
-			Cell cell, float xOffset, float yOffset) {
+			Cell cell, float xOffset, float yOffset, float zoom) {
 		canvas.drawBitmap(Bitmapper.getBitmap(c, v),
-				MetricsService.getXFromCell(cell, xOffset)
-						+ MetricsService.LEFT_MARGIN,
-				MetricsService.getYFromCell(cell, yOffset)
-						+ MetricsService.TOP_MARGIN, paintPlayer);
+				MetricsService.getXFromCell(cell, xOffset,+zoom) + MetricsService.LEFT_MARGIN,
+				MetricsService.getYFromCell(cell, yOffset,-zoom) + MetricsService.TOP_MARGIN, paintPlayer);
 
 	}
 
 	public static void drawBitmapPlayer(Canvas canvas, Cell cell,
-			float xOffset, float yOffset, float xAnimiate, float yAnimiate) {
-		canvas.drawBitmap(playerBitmap,
-				MetricsService.getXFromCell(cell, xOffset) + xAnimiate
-						+ MetricsService.LEFT_MARGIN,
-				MetricsService.getYFromCell(cell, yOffset) + yAnimiate
-						+ MetricsService.TOP_MARGIN, paintPlayer);
+			float xOffset, float yOffset, float xAnimiate, float yAnimiate, float zoom) {
+		
+		int left = (int) (MetricsService.getXFromCell(cell, xOffset,0) + xAnimiate  - zoom);//+ MetricsService.LEFT_MARGIN
+		int top = (int) (MetricsService.getYFromCell(cell, yOffset,0) + yAnimiate  - zoom);//+ MetricsService.TOP_MARGIN 
+		int right= (int) (MetricsService.getXFromNextCell(cell, xOffset,0) + xAnimiate  +zoom);//- MetricsService.LEFT_MARGIN
+		int bottom=(int) (MetricsService.getYFormNextCell(cell, yOffset,0) + yAnimiate +zoom);//- MetricsService.TOP_MARGIN
+		if(zoom!=0)
+			System.out.println("X="+MetricsService.getXFromCell(cell, xOffset,0)+" xOffset="+xOffset+" xAnimiate="+xAnimiate+
+					" Y="+MetricsService.getYFromCell(cell, yOffset,0)+" yOffset="+yOffset+" yAnimiate="+yAnimiate+" zoom="+zoom+
+					" left="+left+" top="+top+" right="+right+" bottom="+bottom);
+
+		Rect dst = new Rect(left,top,right,bottom);
+			
+		canvas.drawBitmap(playerBitmap, null, dst, null);
+		
+//		canvas.drawBitmap(playerBitmap,
+//				MetricsService.getXFromCell(cell, xOffset,zoom) + xAnimiate + MetricsService.LEFT_MARGIN,
+//				MetricsService.getYFromCell(cell, yOffset,zoom) + yAnimiate + MetricsService.TOP_MARGIN, paintPlayer);
 
 	}
 
@@ -187,16 +186,16 @@ public class BitmapPainter extends Painter {
 
 	public static synchronized void drawCreatures(Canvas canvas, Cell cell,
 			Player player, float xOffset, float yOffset, float xAnimiate,
-			float yAnimiate) {
+			float yAnimiate, float zoom) {
 		if (cell.getHosts().size() == 0) {
 		} else if (cell.getHosts().size() > 0) {
 			CopyOnWriteArrayList<Creature> hosts = cell.getHosts();
 			for (Creature p : hosts) {
 				if (p instanceof Player) {
 					BitmapPainter.drawBitmapPlayer(canvas, cell, xOffset,
-							yOffset, xAnimiate, yAnimiate);
+							yOffset, xAnimiate, yAnimiate,zoom);
 				} else {
-					drawBitmapCreature(view, p, canvas, cell, xOffset, yOffset);
+					drawBitmapCreature(view, p, canvas, cell, xOffset, yOffset,0);
 					if (!SoundSource.creatureHasProducedSound) {
 						if (p.getPosition().equals(player.getPosition())) {
 							SoundSource.play(p, SoundSource.ANGRY, activity);

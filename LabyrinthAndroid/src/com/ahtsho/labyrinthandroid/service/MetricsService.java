@@ -21,7 +21,8 @@ public class MetricsService {
 	public static float TOP_MARGIN = 0;
 	public static float LEFT_MARGIN_TOOL = 60;
 	public static float TOP_MARGIN_TOOL = 50;
-	public static final double ZOOM_FACTOR = 0.3;
+	public static final double ZOOM_FACTOR = 0.1;
+	public static final float PLAYER_MAX_ZOOM = 200;
 	
 	public static float xOffset = 0;
 	public static float yOffset = 0;
@@ -56,27 +57,27 @@ public class MetricsService {
 	}
 
 	public static float getYOfCellCenter(Cell cell, float offset) {
-		return getYFromCell(cell, offset) + CELL_HEIGHT / 2;
+		return getYFromCell(cell, offset,0) + CELL_HEIGHT / 2;
 	}
 
 	public static float getXOfCellCenter(Cell cell, float offset) {
-		return getXFromCell(cell, offset) + CELL_WIDTH / 2;
+		return getXFromCell(cell, offset,0) + CELL_WIDTH / 2;
 	}
 
-	public static float getXFromNextCell(Cell cell, float offset) {
-		return (cell.getCol() + 1) * CELL_WIDTH - offset;
+	public static float getXFromNextCell(Cell cell, float offset, float zoom) {
+		return (cell.getCol() + 1) * CELL_WIDTH - offset - zoom;
 	}
 
-	public static float getYFormNextCell(Cell cell, float offset) {
-		return (cell.getRow() + 1) * CELL_HEIGHT - offset;
+	public static float getYFormNextCell(Cell cell, float offset, float zoom) {
+		return (cell.getRow() + 1) * CELL_HEIGHT - offset - zoom;
 	}
 
-	public static float getYFromCell(Cell cell, float offset) {
-		return cell.getRow() * CELL_HEIGHT - offset;
+	public static float getYFromCell(Cell cell, float offset, float zoom) {
+		return cell.getRow() * CELL_HEIGHT - offset - zoom;
 	}
 
-	public static float getXFromCell(Cell cell, float offset) {
-		return cell.getCol() * CELL_WIDTH - offset;
+	public static float getXFromCell(Cell cell, float offset,float zoom) {
+		return cell.getCol() * CELL_WIDTH - offset - zoom;
 	}
 	
 	public static char getDirectionFromPosition(float x0, float y0, float xf, float yf) {
@@ -100,12 +101,12 @@ public class MetricsService {
 	}
 
 	public static synchronized boolean coordsBelongtoCell(Cell c, float x, float y) {
-		float cellTopLeftX = getXFromCell(c, xOffset + leftScreenPadding);
+		float cellTopLeftX = getXFromCell(c, xOffset + leftScreenPadding,0);
 		Log.d("belongs to player position", "cellTopLeftX=" + cellTopLeftX);
-		float cellTopLeftY = getYFromCell(c, yOffset + topScreenPadding);
+		float cellTopLeftY = getYFromCell(c, yOffset + topScreenPadding,0);
 		Log.d("belongs to player position", "cellTopLefty=" + cellTopLeftX);
-		float cellTopRightX = getXFromCell(c, xOffset) + CELL_WIDTH + leftScreenPadding;
-		float cellBottomLeftY = getYFromCell(c, yOffset) + CELL_HEIGHT + topScreenPadding;
+		float cellTopRightX = getXFromCell(c, xOffset,0) + CELL_WIDTH + leftScreenPadding;
+		float cellBottomLeftY = getYFromCell(c, yOffset,0) + CELL_HEIGHT + topScreenPadding;
 
 		if ((x < cellTopRightX) && (x > cellTopLeftX) && (y < cellBottomLeftY) && (y > cellTopLeftY)) {
 			return true;

@@ -23,64 +23,64 @@ public class CanvasPainter extends Painter {
 		super(anActivity, aView, paints);
 	}
 
-	public static void drawCell(Canvas canvas, Cell cell, float xOffset, float yOffset, boolean showCoords) {
-		drawWestWall(canvas, cell, xOffset, yOffset, showCoords);
-		drawNorthWall(canvas, cell, xOffset, yOffset, showCoords);
-		drawSouthWall(canvas, cell, xOffset, yOffset, showCoords);
-		drawEastWall(canvas, cell, xOffset, yOffset, showCoords);
+	public static void drawCell(Canvas canvas, Cell cell, float xOffset, float yOffset, float zoom) {
+		drawWestWall(canvas, cell, xOffset, yOffset, zoom);
+		drawNorthWall(canvas, cell, xOffset, yOffset, zoom);
+		drawSouthWall(canvas, cell, xOffset, yOffset, zoom);
+		drawEastWall(canvas, cell, xOffset, yOffset, zoom);
 	}
 
-	public static void drawWestWall(Canvas canvas, Cell cell, float xOffset, float yOffset, boolean showCoords) {
+	public static void drawWestWall(Canvas canvas, Cell cell, float xOffset, float yOffset, float zoom) {
 		if (cell.isWest()) {
-			canvas.drawLine(MetricsService.getXFromCell(cell, xOffset), MetricsService.getYFromCell(cell, yOffset),
-					MetricsService.getXFromCell(cell, xOffset), MetricsService.getYFormNextCell(cell, yOffset), paintCell);
+			canvas.drawLine(MetricsService.getXFromCell(cell, xOffset,-zoom), 
+					MetricsService.getYFromCell(cell, yOffset,-zoom),
+					MetricsService.getXFromCell(cell, xOffset,-zoom), 
+					MetricsService.getYFormNextCell(cell, yOffset,zoom), paintCell);
 
 		} else {
-			canvas.drawLine(MetricsService.getXFromCell(cell, xOffset), MetricsService.getYFromCell(cell, yOffset),
-					MetricsService.getXFromCell(cell, xOffset), MetricsService.getYFormNextCell(cell, yOffset), paintEmptyWall);
+			canvas.drawLine(MetricsService.getXFromCell(cell, xOffset,-zoom), MetricsService.getYFromCell(cell, yOffset,-zoom),
+					MetricsService.getXFromCell(cell, xOffset,-zoom), MetricsService.getYFormNextCell(cell, yOffset,zoom), paintEmptyWall);
 		}
-		if (showCoords) {
-			canvas.drawText("W(" + MetricsService.getXFromCell(cell, xOffset) + "," + MetricsService.getYFromCell(cell, yOffset) + ")",
-					MetricsService.getXFromCell(cell, -10 + xOffset), MetricsService.getYFromCell(cell, -30 + yOffset), paintText);
-			canvas.drawText("(" + MetricsService.getXFromCell(cell, xOffset) + "," + MetricsService.getYFormNextCell(cell, yOffset) + ")",
-					MetricsService.getXFromCell(cell, -10 + xOffset), MetricsService.getYFormNextCell(cell, 20 + yOffset), paintText);
-		}
+		
 	}
 
-	public static void drawNorthWall(Canvas canvas, Cell cell, float xOffset, float yOffset, boolean showCoords) {
+	public static void drawNorthWall(Canvas canvas, Cell cell, float xOffset, float yOffset, float zoom) {
 		if (cell.isNorth()) {
-			canvas.drawLine(MetricsService.getXFromCell(cell, xOffset), MetricsService.getYFromCell(cell, yOffset),
-					MetricsService.getXFromNextCell(cell, xOffset), MetricsService.getYFromCell(cell, yOffset), paintCell);// north
+			canvas.drawLine(MetricsService.getXFromCell(cell, xOffset,-zoom), 
+					MetricsService.getYFromCell(cell, yOffset,-zoom),
+					MetricsService.getXFromNextCell(cell, xOffset,zoom), 
+					MetricsService.getYFromCell(cell, yOffset,-zoom), paintCell);// north
 		} else {
-			canvas.drawLine(MetricsService.getXFromCell(cell, xOffset), MetricsService.getYFromCell(cell, yOffset),
-					MetricsService.getXFromNextCell(cell, xOffset), MetricsService.getYFromCell(cell, yOffset), paintEmptyWall);
+			canvas.drawLine(MetricsService.getXFromCell(cell, xOffset,-zoom), MetricsService.getYFromCell(cell, yOffset,-zoom),
+					MetricsService.getXFromNextCell(cell, xOffset,zoom), MetricsService.getYFromCell(cell, yOffset,-zoom), paintEmptyWall);
 		}
-		if (showCoords) {
-		}
+		
 	}
 
-	public static void drawSouthWall(Canvas canvas, Cell cell, float xOffset, float yOffset, boolean showCoords) {
+	public static void drawSouthWall(Canvas canvas, Cell cell, float xOffset, float yOffset, float zoom) {
 		if (cell.isSouth()) {
-			canvas.drawLine(MetricsService.getXFromCell(cell, xOffset), MetricsService.getYFormNextCell(cell, yOffset),
-					MetricsService.getXFromNextCell(cell, xOffset), MetricsService.getYFormNextCell(cell, yOffset), paintCell);// south
+			canvas.drawLine(MetricsService.getXFromCell(cell, xOffset,-zoom), 
+					MetricsService.getYFormNextCell(cell, yOffset,zoom),
+					MetricsService.getXFromNextCell(cell, xOffset,zoom), 
+					MetricsService.getYFormNextCell(cell, yOffset,zoom), paintCell);// south
 		} else {
-			canvas.drawLine(MetricsService.getXFromCell(cell, xOffset), MetricsService.getYFormNextCell(cell, yOffset),
-					MetricsService.getXFromNextCell(cell, xOffset), MetricsService.getYFormNextCell(cell, yOffset), paintEmptyWall);
+			canvas.drawLine(MetricsService.getXFromCell(cell, xOffset,-zoom), MetricsService.getYFormNextCell(cell, yOffset,zoom),
+					MetricsService.getXFromNextCell(cell, xOffset,zoom), MetricsService.getYFormNextCell(cell, yOffset,zoom), paintEmptyWall);
 		}
-		if (showCoords) {
-		}
+		
 	}
 
-	public static void drawEastWall(Canvas canvas, Cell cell, float xOffset, float yOffset, boolean showCoords) {
+	public static void drawEastWall(Canvas canvas, Cell cell, float xOffset, float yOffset, float zoom) {
 		if (cell.isEast()) {
-			canvas.drawLine(MetricsService.getXFromNextCell(cell, xOffset), MetricsService.getYFromCell(cell, yOffset),
-					MetricsService.getXFromNextCell(cell, xOffset), MetricsService.getYFormNextCell(cell, yOffset), paintCell);// east
+			canvas.drawLine(MetricsService.getXFromNextCell(cell, xOffset,zoom), 
+					MetricsService.getYFromCell(cell, yOffset,-zoom),
+					MetricsService.getXFromNextCell(cell, xOffset,zoom), 
+					MetricsService.getYFormNextCell(cell, yOffset,zoom), paintCell);// east
 		} else {
-			canvas.drawLine(MetricsService.getXFromNextCell(cell, xOffset), MetricsService.getYFromCell(cell, yOffset),
-					MetricsService.getXFromNextCell(cell, xOffset), MetricsService.getYFormNextCell(cell, yOffset), paintEmptyWall);
+			canvas.drawLine(MetricsService.getXFromNextCell(cell, xOffset,zoom), MetricsService.getYFromCell(cell, yOffset,-zoom),
+					MetricsService.getXFromNextCell(cell, xOffset,zoom), MetricsService.getYFormNextCell(cell, yOffset,zoom), paintEmptyWall);
 		}
-		if (showCoords) {
-		}
+		
 	}
 
 	public static void drawPlayer(Canvas canvas, Cell cell, Player player, float xOffset, float yOffset, float xAnimiate, float yAnimiate,
@@ -113,13 +113,14 @@ public class CanvasPainter extends Painter {
 	}
 
 	public static void drawTools(Canvas canvas, Cell cell, float xOffset, float yOffset) {
+	 float zoom=0;
 		if (cell.getTools().size() > 0) {
 			for (Tool t : cell.getTools()) {
 				canvas.drawRect(
-						new Rect((int) (MetricsService.getXFromCell(cell, xOffset) + MetricsService.CELL_WIDTH / 3), (int) (MetricsService
-								.getYFromCell(cell, yOffset) + MetricsService.CELL_HEIGHT * 1 / 4), (int) (MetricsService.getXFromNextCell(cell,
-								xOffset) - MetricsService.CELL_WIDTH / 3),
-								(int) (MetricsService.getYFormNextCell(cell, yOffset) - MetricsService.CELL_HEIGHT * 1 / 4)), paintCreature);
+						new Rect((int) (MetricsService.getXFromCell(cell, xOffset,-zoom) + MetricsService.CELL_WIDTH / 3), (int) (MetricsService
+								.getYFromCell(cell, yOffset,-zoom) + MetricsService.CELL_HEIGHT * 1 / 4), (int) (MetricsService.getXFromNextCell(cell,
+								xOffset,zoom) - MetricsService.CELL_WIDTH / 3),
+								(int) (MetricsService.getYFormNextCell(cell, yOffset,zoom) - MetricsService.CELL_HEIGHT * 1 / 4)), paintCreature);
 			}
 		}
 	}

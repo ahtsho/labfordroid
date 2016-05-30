@@ -28,9 +28,11 @@ public class HandAnimationService extends AnimationService {
 	
 	
 	public static boolean animationEnded() {
-		if (xAnimiateHand >= MetricsService.CELL_WIDTH || yAnimiateHand >= MetricsService.CELL_HEIGHT
-				|| xAnimiateHand <= -MetricsService.CELL_WIDTH
-				|| yAnimiateHand <= -MetricsService.CELL_HEIGHT)
+		
+		if (xAnimiateHand >= (MetricsService.CELL_WIDTH *2/3)
+				|| yAnimiateHand >=( MetricsService.CELL_HEIGHT *2/3) 
+				|| xAnimiateHand <=( -MetricsService.CELL_WIDTH *2/3) 
+				|| yAnimiateHand <= (-MetricsService.CELL_HEIGHT *2/3) )
 			return true;
 		return false;
 	}
