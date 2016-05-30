@@ -184,8 +184,7 @@ public class SoundSource implements Performer {
 				}
 				break;
 			case HEAL:
-				mediaPlayer = MediaPlayer.create(
-						activity.getApplicationContext(), R.raw.healing);
+				mediaPlayer = MediaPlayer.create(activity.getApplicationContext(), R.raw.healing);
 				break;
 			default:
 				break;

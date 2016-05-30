@@ -216,6 +216,7 @@ public class LabyrinthView extends View {
 	
 	private void goToPrevLevel()  {
 		Player.fell=false;
+		GameService.setLevel(Level.goTo(-2));
 		UICommunicationManager.showLevelChangedMessage(mainActivity);
 		try {
 			labyrinth = Level.genLabyrinth();
