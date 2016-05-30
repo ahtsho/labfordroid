@@ -1,21 +1,18 @@
 package com.ahtsho.labyrinthandroid.activity;
 
-import com.ahtsho.labyrinthandroid.R;
-import com.ahtsho.labyrinthandroid.service.SoundSource;
-
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.ahtsho.labyrinthandroid.R;
+import com.ahtsho.labyrinthandroid.service.SoundSource;
 
 public class SettingsActivity extends Activity {
 	private int chosenPlayer = 0;

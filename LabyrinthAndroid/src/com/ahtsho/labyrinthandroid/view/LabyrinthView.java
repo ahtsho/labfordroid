@@ -1,17 +1,13 @@
 package com.ahtsho.labyrinthandroid.view;
 
-import game.Level;
-import infrastructure.*;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.ahtsho.labyrinthandroid.service.*;
-import com.ahtsho.labyrinthandroid.util.ErrorLogger;
-import com.ahtsho.labyrinthandroid.view.painters.*;
-
-import creatures.Player;
+import model.creatures.Player;
+import model.game.Level;
+import model.infrastructure.Cell;
+import model.infrastructure.Labyrinth;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
@@ -20,6 +16,17 @@ import android.graphics.Paint;
 import android.os.Build;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.ahtsho.labyrinthandroid.service.GameService;
+import com.ahtsho.labyrinthandroid.service.HandAnimationService;
+import com.ahtsho.labyrinthandroid.service.MetricsService;
+import com.ahtsho.labyrinthandroid.service.PlayerAnimationService;
+import com.ahtsho.labyrinthandroid.service.SoundSource;
+import com.ahtsho.labyrinthandroid.service.VibriationService;
+import com.ahtsho.labyrinthandroid.util.ErrorLogger;
+import com.ahtsho.labyrinthandroid.view.painters.BitmapPainter;
+import com.ahtsho.labyrinthandroid.view.painters.CanvasPainter;
+import com.ahtsho.labyrinthandroid.view.painters.Painter;
 
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class LabyrinthView extends View {
@@ -127,10 +134,8 @@ public class LabyrinthView extends View {
 	}
 
 	private void transitToPrevLevelWithAnimation() {
-		System.out.println("transit to prev level");
 		PlayerAnimationService.zoom(PlayerAnimationService.OUT);
 		if(PlayerAnimationService.animationEnded(PlayerAnimationService.Type.ZOOM)) {
-			System.out.println("animation ended");
 			PlayerAnimationService.reset(PlayerAnimationService.Type.ZOOM);
 			goToPrevLevel();
 		}		
@@ -150,7 +155,6 @@ public class LabyrinthView extends View {
 					PlayerAnimationService.xAnimiate, PlayerAnimationService.yAnimiate,PlayerAnimationService.zoom);
 			BitmapPainter.drawTools(canvas, cell, player, xOffset, yOffset);
 		}
-//		CanvasPainter.drawCoords(canvas, cell, xOffset, yOffset, showCoords);
 	}
 
 	@Override
@@ -182,11 +186,11 @@ public class LabyrinthView extends View {
 						if (labyrinth.getPlayer().getPosition().equals(playerPosition)) {
 							VibriationService.vibrate();
 							new SoundSource(labyrinth.getPlayer(), SoundSource.BUMP, mainActivity);
-//							new SoundSource(labyrinth.getPlayer(), SoundSource.PAIN, mainActivity);
 						} else {
 							pathCurrCellIdx++;// has moved 
 						}
 						if(Player.fell){
+							new SoundSource(labyrinth.getPlayer(), SoundSource.FALL, mainActivity);
 							PlayerAnimationService.startAnimation();
 						}
 							
@@ -212,13 +216,10 @@ public class LabyrinthView extends View {
 	
 	private void goToPrevLevel()  {
 		Player.fell=false;
-		System.out.println("Player.fell="+Player.fell);
-
 		UICommunicationManager.showLevelChangedMessage(mainActivity);
 		try {
 			labyrinth = Level.genLabyrinth();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		cells = labyrinth.getCells();

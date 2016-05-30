@@ -1,6 +1,5 @@
 package com.ahtsho.labyrinthandroid.service;
 
-import infrastructure.Cell;
 
 public class LabyrinthAnimationService extends AnimationService{
 

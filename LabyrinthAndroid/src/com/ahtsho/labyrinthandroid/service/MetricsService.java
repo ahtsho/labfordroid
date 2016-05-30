@@ -1,10 +1,10 @@
 package com.ahtsho.labyrinthandroid.service;
 
+import model.infrastructure.Cell;
 import android.content.Context;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.WindowManager;
-import infrastructure.Cell;
 
 public class MetricsService {
 	public static final int PLAYER_EXIT_ANIMATION_Y_AXIS_MAX_VALUE = 600;

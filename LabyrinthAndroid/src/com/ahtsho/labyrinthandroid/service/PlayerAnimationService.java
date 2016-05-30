@@ -1,6 +1,6 @@
 package com.ahtsho.labyrinthandroid.service;
 
-import infrastructure.Cell;
+import model.infrastructure.Cell;
 
 public class PlayerAnimationService extends AnimationService {
 	public static float xAnimiate = 0;

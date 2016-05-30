@@ -1,6 +1,6 @@
 package com.ahtsho.labyrinthandroid.service;
 
-import infrastructure.Cell;
+import model.infrastructure.Cell;
 
 public class HandAnimationService extends AnimationService {
 	private static final float HAND_ANIMIATION_STEP = 3;

@@ -1,16 +1,21 @@
 package com.ahtsho.labyrinthandroid.view;
 
-import infrastructure.Cell;
-import tools.*;
-
-import com.ahtsho.labyrinthandroid.R;
-
+import model.creatures.Creature;
+import model.creatures.Guard;
+import model.creatures.Player;
+import model.infrastructure.Cell;
+import model.tools.Bomb;
+import model.tools.Box;
+import model.tools.Heart;
+import model.tools.Hole;
+import model.tools.Medicine;
+import model.tools.Plaster;
+import model.tools.Tool;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.View;
-import creatures.Creature;
-import creatures.Guard;
-import creatures.Player;
+
+import com.ahtsho.labyrinthandroid.R;
 
 public class Bitmapper {
 	

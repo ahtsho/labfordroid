@@ -2,8 +2,10 @@ package com.ahtsho.labyrinthandroid.view.painters;
 
 import java.util.HashMap;
 
-import tools.Tool;
-import infrastructure.Cell;
+import model.creatures.Creature;
+import model.creatures.Player;
+import model.infrastructure.Cell;
+import model.tools.Tool;
 import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -11,11 +13,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.View;
 
-import com.ahtsho.labyrinthandroid.service.GameService;
 import com.ahtsho.labyrinthandroid.service.MetricsService;
-
-import creatures.Creature;
-import creatures.Player;
 
 public class CanvasPainter extends Painter {
 

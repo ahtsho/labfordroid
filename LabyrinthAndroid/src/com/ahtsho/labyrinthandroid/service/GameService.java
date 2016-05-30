@@ -16,6 +16,6 @@ public class GameService {
 	
 	public static String getLevelName() {
 		if(level== 1) return "demo";
-		else return "Level "+(level -2) ;
+		else return "Level "+level ;
 	}
 }

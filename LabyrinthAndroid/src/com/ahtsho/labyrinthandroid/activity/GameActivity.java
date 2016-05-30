@@ -2,8 +2,8 @@ package com.ahtsho.labyrinthandroid.activity;
 
 import java.util.HashMap;
 
-import game.*;
-import infrastructure.*;
+import model.game.Level;
+import model.infrastructure.Labyrinth;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
-import android.graphics.Paint.Style;
 import android.os.Build;
 import android.os.Bundle;
 

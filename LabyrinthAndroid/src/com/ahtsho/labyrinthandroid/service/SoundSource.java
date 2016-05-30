@@ -1,6 +1,9 @@
 package com.ahtsho.labyrinthandroid.service;
 
-import interfaces.Performer;
+import model.creatures.Creature;
+import model.creatures.Guard;
+import model.creatures.Player;
+import model.interfaces.Performer;
 import android.app.Activity;
 import android.content.Context;
 import android.media.AudioManager;
@@ -8,18 +11,16 @@ import android.media.MediaPlayer;
 
 import com.ahtsho.labyrinthandroid.R;
 
-import creatures.Creature;
-import creatures.Guard;
-import creatures.Player;
-
 public class SoundSource implements Performer {
+	public final static int ANGRY = 3;
 	public static final int EXIT = 5;
 	public static final int BUMP = 6;
-	public final static int ANGRY = 3;
-
+	public static final int FALL = 7;
+	
 	public final static int SYSTEM_STATUS_GAME_OVER = 10;
 	public final static int SYSTEM_STATUS_END_GAME = 11;
 	public final static int SYSTEM_STATUS_RESTART_GAME = 12;
+	
 
 	private static boolean audioOn = true;
 
@@ -38,42 +39,31 @@ public class SoundSource implements Performer {
 			if (creature != null) {
 				if (creature instanceof Guard) {
 					if (type == ANGRY) {
-						if (creature.getName() == "G3") {
-							mediaPlayer = MediaPlayer.create(
-									activity.getApplicationContext(),
-									R.raw.monster_hiss);
+						if (creature.getName() == "G3") {mediaPlayer = MediaPlayer.create(activity.getApplicationContext(),R.raw.monster_hiss);
 						} else if (creature.getName() == "G5") {
-							mediaPlayer = MediaPlayer.create(
-									activity.getApplicationContext(),
-									R.raw.monster_hiss);
+							mediaPlayer = MediaPlayer.create(activity.getApplicationContext(),R.raw.monster_hiss);
 						} else if (creature.getName() == "G8") {
-							mediaPlayer = MediaPlayer.create(
-									activity.getApplicationContext(),
-									R.raw.monster_hiss);
+							mediaPlayer = MediaPlayer.create(activity.getApplicationContext(),R.raw.monster_hiss);
 						} else if (creature.getName() == "G9") {
-							mediaPlayer = MediaPlayer.create(
-									activity.getApplicationContext(),
-									R.raw.monster_hiss);
+							mediaPlayer = MediaPlayer.create(activity.getApplicationContext(),R.raw.monster_hiss);
 						}
 					}
 				} else if (creature instanceof Player) {
 					switch (type) {
 					case EXIT:
-						mediaPlayer = MediaPlayer.create(
-								activity.getApplicationContext(), R.raw.exit);
+						mediaPlayer = MediaPlayer.create(activity.getApplicationContext(), R.raw.exit);
 						break;
 					case DAMAGE:
-						mediaPlayer = MediaPlayer.create(
-								activity.getApplicationContext(), R.raw.ouch);
+						mediaPlayer = MediaPlayer.create(activity.getApplicationContext(), R.raw.ouch);
 						break;
 					case BUMP:
-						mediaPlayer = MediaPlayer.create(
-								activity.getApplicationContext(), R.raw.bump);
+						mediaPlayer = MediaPlayer.create(activity.getApplicationContext(), R.raw.bump);
 						break;
 					case HEAL:
-						mediaPlayer = MediaPlayer.create(
-								activity.getApplicationContext(),
-								R.raw.cracking_up);
+						mediaPlayer = MediaPlayer.create(activity.getApplicationContext(),R.raw.cracking_up);
+						break;
+					case FALL:
+						mediaPlayer = MediaPlayer.create(activity.getApplicationContext(),R.raw.falling);
 						break;
 					default:
 						break;
@@ -86,33 +76,6 @@ public class SoundSource implements Performer {
 		}
 	}
 
-	// public SoundSource(Tool tool, Activity activity) {
-	// if (audioOn) {
-	// MediaPlayer mediaPlayer = null;
-	// if (tool instanceof Plaster) {
-	// mediaPlayer = MediaPlayer.create(activity.getApplicationContext(),
-	// R.raw.bump);
-	// } else if (tool instanceof Medicine) {
-	// mediaPlayer = MediaPlayer.create(activity.getApplicationContext(),
-	// R.raw.bump);
-	// } else if (tool instanceof Box) {
-	// mediaPlayer = MediaPlayer.create(activity.getApplicationContext(),
-	// R.raw.bump);
-	// } else if (tool instanceof Bomb) {
-	// mediaPlayer = MediaPlayer.create(activity.getApplicationContext(),
-	// R.raw.bump);
-	// } else if (tool instanceof Heart) {
-	// mediaPlayer = MediaPlayer.create(activity.getApplicationContext(),
-	// R.raw.bump);
-	// } else if (tool instanceof Hole) {
-	// mediaPlayer = MediaPlayer.create(activity.getApplicationContext(),
-	// R.raw.bump);
-	// }
-	// if (mediaPlayer != null) {
-	// mediaPlayer.start();
-	// }
-	// }
-	// }
 
 	public SoundSource(int systemStatus, Activity mainActivity) {
 
@@ -216,8 +179,9 @@ public class SoundSource implements Performer {
 			MediaPlayer mediaPlayer = null;
 			switch (state) {
 			case DAMAGE:
-				mediaPlayer = MediaPlayer.create(
-						activity.getApplicationContext(), R.raw.ouch);
+				if(!Player.fell){
+					mediaPlayer = MediaPlayer.create(activity.getApplicationContext(), R.raw.ouch);
+				}
 				break;
 			case HEAL:
 				mediaPlayer = MediaPlayer.create(

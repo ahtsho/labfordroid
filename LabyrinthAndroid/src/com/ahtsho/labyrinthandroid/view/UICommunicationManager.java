@@ -1,6 +1,6 @@
 package com.ahtsho.labyrinthandroid.view;
 
-import game.Level;
+import model.game.Level;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -47,9 +47,7 @@ public class UICommunicationManager {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					Level.goTo(-(Level.currentLevel - 3));
-					new SoundSource(SoundSource.SYSTEM_STATUS_RESTART_GAME,
-							activity);
-//					activity.recreate();
+					new SoundSource(SoundSource.SYSTEM_STATUS_RESTART_GAME, activity);
 					Intent myIntent = new Intent(activity, GameActivity.class);
 					myIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);	
 					activity.startActivity(myIntent);

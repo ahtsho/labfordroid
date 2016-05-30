@@ -1,11 +1,11 @@
 package com.ahtsho.labyrinthandroid.activity;
 
-import com.ahtsho.labyrinthandroid.R;
-
-import android.os.Bundle;
-import android.os.Handler;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+
+import com.ahtsho.labyrinthandroid.R;
 
 public class SplashActivity extends Activity {
 

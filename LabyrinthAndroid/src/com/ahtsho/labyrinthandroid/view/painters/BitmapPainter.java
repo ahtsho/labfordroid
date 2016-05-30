@@ -3,8 +3,10 @@ package com.ahtsho.labyrinthandroid.view.painters;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import tools.Tool;
-import infrastructure.Cell;
+import model.creatures.Creature;
+import model.creatures.Player;
+import model.infrastructure.Cell;
+import model.tools.Tool;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -16,9 +18,6 @@ import com.ahtsho.labyrinthandroid.service.MetricsService;
 import com.ahtsho.labyrinthandroid.service.SoundSource;
 import com.ahtsho.labyrinthandroid.view.Bitmapper;
 import com.ahtsho.labyrinthandroid.view.Texture;
-
-import creatures.Creature;
-import creatures.Player;
 
 public class BitmapPainter extends Painter {
 	public BitmapPainter(Activity anActivity, View aView,
@@ -159,18 +158,7 @@ public class BitmapPainter extends Painter {
 		int top = (int) (MetricsService.getYFromCell(cell, yOffset,0) + yAnimiate  - zoom);//+ MetricsService.TOP_MARGIN 
 		int right= (int) (MetricsService.getXFromNextCell(cell, xOffset,0) + xAnimiate  +zoom);//- MetricsService.LEFT_MARGIN
 		int bottom=(int) (MetricsService.getYFormNextCell(cell, yOffset,0) + yAnimiate +zoom);//- MetricsService.TOP_MARGIN
-		if(zoom!=0)
-			System.out.println("X="+MetricsService.getXFromCell(cell, xOffset,0)+" xOffset="+xOffset+" xAnimiate="+xAnimiate+
-					" Y="+MetricsService.getYFromCell(cell, yOffset,0)+" yOffset="+yOffset+" yAnimiate="+yAnimiate+" zoom="+zoom+
-					" left="+left+" top="+top+" right="+right+" bottom="+bottom);
-
-		Rect dst = new Rect(left,top,right,bottom);
-			
-		canvas.drawBitmap(playerBitmap, null, dst, null);
-		
-//		canvas.drawBitmap(playerBitmap,
-//				MetricsService.getXFromCell(cell, xOffset,zoom) + xAnimiate + MetricsService.LEFT_MARGIN,
-//				MetricsService.getYFromCell(cell, yOffset,zoom) + yAnimiate + MetricsService.TOP_MARGIN, paintPlayer);
+		canvas.drawBitmap(playerBitmap, null, new Rect(left,top,right,bottom), null);
 
 	}
 
