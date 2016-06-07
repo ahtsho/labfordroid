@@ -75,7 +75,12 @@ public class LabyrinthView extends View {
 			drawCell(canvas, cells.get(i), MetricsService.getStartingX(), MetricsService.getStartingY(), 0);
 			transitToNextLevelWithAnimation();
 			if(Player.fell){
-				transitToPrevLevelWithAnimation();
+				try {
+					transitToPrevLevelWithAnimation();
+				} catch (Exception e) {
+					System.out.println(e.getCause());
+					
+				}
 			}
 		}
 		
@@ -133,7 +138,7 @@ public class LabyrinthView extends View {
 		}		
 	}
 
-	private void transitToPrevLevelWithAnimation() {
+	private void transitToPrevLevelWithAnimation() throws Exception {
 		PlayerAnimationService.zoom(PlayerAnimationService.OUT);
 		if(PlayerAnimationService.animationEnded(PlayerAnimationService.Type.ZOOM)) {
 			PlayerAnimationService.reset(PlayerAnimationService.Type.ZOOM);
@@ -214,15 +219,11 @@ public class LabyrinthView extends View {
 		MetricsService.centerSmallLabyrinths(labyrinth.getDimension());
 	}
 	
-	private void goToPrevLevel()  {
+	private void goToPrevLevel() throws Exception {
 		Player.fell=false;
 		GameService.setLevel(Level.goTo(-2));
 		UICommunicationManager.showLevelChangedMessage(mainActivity);
-		try {
-			labyrinth = Level.genLabyrinth();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		labyrinth = Level.genLabyrinth();
 		cells = labyrinth.getCells();
 		player.setPosition(labyrinth.getEntrance());
 		labyrinth.setPlayer(player);

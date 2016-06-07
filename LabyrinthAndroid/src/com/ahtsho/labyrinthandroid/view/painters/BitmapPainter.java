@@ -154,10 +154,10 @@ public class BitmapPainter extends Painter {
 	public static void drawBitmapPlayer(Canvas canvas, Cell cell,
 			float xOffset, float yOffset, float xAnimiate, float yAnimiate, float zoom) {
 		
-		int left = (int) (MetricsService.getXFromCell(cell, xOffset,0) + xAnimiate  - zoom);//+ MetricsService.LEFT_MARGIN
-		int top = (int) (MetricsService.getYFromCell(cell, yOffset,0) + yAnimiate  - zoom);//+ MetricsService.TOP_MARGIN 
-		int right= (int) (MetricsService.getXFromNextCell(cell, xOffset,0) + xAnimiate  +zoom);//- MetricsService.LEFT_MARGIN
-		int bottom=(int) (MetricsService.getYFormNextCell(cell, yOffset,0) + yAnimiate +zoom);//- MetricsService.TOP_MARGIN
+		int left = (int) (MetricsService.getXFromCell(cell, xOffset,0) + xAnimiate  - zoom + MetricsService.LEFT_MARGIN);//
+		int top = (int) (MetricsService.getYFromCell(cell, yOffset,0) + yAnimiate  - zoom + MetricsService.TOP_MARGIN);// 
+		int right= (int) (MetricsService.getXFromNextCell(cell, xOffset,0) + xAnimiate  +zoom - MetricsService.LEFT_MARGIN);//
+		int bottom=(int) (MetricsService.getYFormNextCell(cell, yOffset,0) + yAnimiate +zoom - MetricsService.TOP_MARGIN);//
 		canvas.drawBitmap(playerBitmap, null, new Rect(left,top,right,bottom), null);
 
 	}
