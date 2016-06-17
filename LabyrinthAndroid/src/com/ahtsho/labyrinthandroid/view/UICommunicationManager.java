@@ -28,8 +28,7 @@ public class UICommunicationManager {
 			quitClickListener = new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					new SoundSource(SoundSource.SYSTEM_STATUS_END_GAME,
-							activity);
+					new SoundSource(SoundSource.SYSTEM_STATUS_END_GAME,activity);
 //					activity.finish();
 //					Process.killProcess(Process.myPid());
 					System.exit(2);
@@ -46,7 +45,7 @@ public class UICommunicationManager {
 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					Level.goTo(-(Level.currentLevel - 3));
+					Level.goTo(-(4));
 					new SoundSource(SoundSource.SYSTEM_STATUS_RESTART_GAME, activity);
 					Intent myIntent = new Intent(activity, GameActivity.class);
 					myIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);	

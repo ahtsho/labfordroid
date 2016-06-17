@@ -1,4 +1,4 @@
-package com.ahtsho.labyrinthandroid.view;
+package com.ahtsho.labyrinthandroid.view.painters;
 
 import model.creatures.Creature;
 import model.creatures.Guard;

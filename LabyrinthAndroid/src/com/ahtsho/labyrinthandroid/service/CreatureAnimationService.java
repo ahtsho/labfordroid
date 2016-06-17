@@ -1,4 +1,4 @@
-package com.ahtsho.labyrinthandroid.view;
+package com.ahtsho.labyrinthandroid.service;
 
 public class CreatureAnimationService {
 

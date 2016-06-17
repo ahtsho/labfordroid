@@ -23,9 +23,11 @@ import com.ahtsho.labyrinthandroid.service.HandAnimationService;
 import com.ahtsho.labyrinthandroid.service.MetricsService;
 import com.ahtsho.labyrinthandroid.service.PlayerAnimationService;
 import com.ahtsho.labyrinthandroid.service.SoundSource;
+import com.ahtsho.labyrinthandroid.service.ToolAnimationService;
 import com.ahtsho.labyrinthandroid.service.VibriationService;
 import com.ahtsho.labyrinthandroid.util.ErrorLogger;
 import com.ahtsho.labyrinthandroid.view.painters.BitmapPainter;
+import com.ahtsho.labyrinthandroid.view.painters.Bitmapper;
 import com.ahtsho.labyrinthandroid.view.painters.CanvasPainter;
 import com.ahtsho.labyrinthandroid.view.painters.Painter;
 

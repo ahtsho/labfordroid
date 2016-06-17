@@ -19,8 +19,6 @@ import android.view.animation.AnimationSet;
 import com.ahtsho.labyrinthandroid.service.BombAnimationService;
 import com.ahtsho.labyrinthandroid.service.MetricsService;
 import com.ahtsho.labyrinthandroid.service.SoundSource;
-import com.ahtsho.labyrinthandroid.view.Bitmapper;
-import com.ahtsho.labyrinthandroid.view.Texture;
 
 public class BitmapPainter extends Painter {
 	public BitmapPainter(Activity anActivity, View aView,
