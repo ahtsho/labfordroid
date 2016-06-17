@@ -6,6 +6,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import model.creatures.Creature;
 import model.creatures.Player;
 import model.infrastructure.Cell;
+import model.tools.Bomb;
 import model.tools.Tool;
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -13,7 +14,9 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.View;
+import android.view.animation.AnimationSet;
 
+import com.ahtsho.labyrinthandroid.service.BombAnimationService;
 import com.ahtsho.labyrinthandroid.service.MetricsService;
 import com.ahtsho.labyrinthandroid.service.SoundSource;
 import com.ahtsho.labyrinthandroid.view.Bitmapper;
@@ -133,13 +136,21 @@ public class BitmapPainter extends Painter {
 	}
 
 	public static void drawBitmapTool(View v, Tool t, Canvas canvas, Cell cell,
-			float xOffset, float yOffset) {
-		float zoom=0;
-		canvas.drawBitmap(Bitmapper.getBitmap(t, v),
-				MetricsService.getXFromCell(cell, xOffset,-zoom)
+			float xOffset, float yOffset, float xAnimiate, float yAnimiate, float zoom,boolean sufferedExplosion) {
+		
+		int left = (int) (MetricsService.getXFromCell(cell, xOffset,0) + xAnimiate  - zoom + MetricsService.LEFT_MARGIN);//
+		int top = (int) (MetricsService.getYFromCell(cell, yOffset,0) + yAnimiate  - zoom + MetricsService.TOP_MARGIN);// 
+		int right= (int) (MetricsService.getXFromNextCell(cell, xOffset,0) + xAnimiate  +zoom - MetricsService.LEFT_MARGIN);//
+		int bottom=(int) (MetricsService.getYFormNextCell(cell, yOffset,0) + yAnimiate +zoom - MetricsService.TOP_MARGIN);//
+		if(t instanceof Bomb){
+			canvas.drawBitmap(Bitmapper.getBitmap(t, v, sufferedExplosion), null, new Rect(left,top,right,bottom), null);
+		} else {
+			canvas.drawBitmap(Bitmapper.getBitmap(t, v,false),
+				MetricsService.getXFromCell(cell, xOffset,0)
 						+ MetricsService.LEFT_MARGIN_TOOL,
-				MetricsService.getYFromCell(cell, yOffset,zoom)
+				MetricsService.getYFromCell(cell, yOffset,0)
 						+ MetricsService.TOP_MARGIN_TOOL, paintPlayer);
+		}
 
 	}
 
@@ -163,11 +174,11 @@ public class BitmapPainter extends Painter {
 	}
 
 	public static void drawTools(Canvas canvas, Cell cell, Player player,
-			float xOffset, float yOffset) {
+			float xOffset, float yOffset, float xAnimiate, float yAnimiate, float zoom) {
 		if (cell.getTools().size() == 0) {
 		} else if (cell.getTools().size() > 0) {
 			for (Tool t : cell.getTools()) {
-				drawBitmapTool(view, t, canvas, cell, xOffset, yOffset);
+				drawBitmapTool(view, t, canvas, cell, xOffset, yOffset, xAnimiate, yAnimiate, zoom,player.sufferedExplosion);
 			}
 		}
 	}
@@ -210,6 +221,24 @@ public class BitmapPainter extends Painter {
 					MetricsService.getYOfScreenCenter()-(MetricsService.getYOfScreenCenter()/3), paintPlayer);
 		}
 
+	}
+
+	
+
+	public static void drawExplosion(Canvas canvas, Cell cell, Player player,
+			float xOffset, float yOffset, float xAnimiate, float yAnimiate,
+			float zoom) {
+		int left = (int) (MetricsService.getXFromCell(cell, xOffset,0) + xAnimiate  - zoom + MetricsService.LEFT_MARGIN);//
+		int top = (int) (MetricsService.getYFromCell(cell, yOffset,0) + yAnimiate  - zoom + MetricsService.TOP_MARGIN);// 
+		int right= (int) (MetricsService.getXFromNextCell(cell, xOffset,0) + xAnimiate  +zoom - MetricsService.LEFT_MARGIN);//
+		int bottom=(int) (MetricsService.getYFormNextCell(cell, yOffset,0) + yAnimiate +zoom - MetricsService.TOP_MARGIN);//
+		
+		canvas.drawBitmap(Bitmapper.getBitmap(new Bomb(1f),view, true), null, new Rect(left,top,right,bottom), null);
+
+		
+//		canvas.drawBitmap(Bitmapper.getBitmap(new Bomb(1f),view, true),
+//				MetricsService.getXOfCellCenter(cell, xOffset)-40+xAnimiate,
+//				MetricsService.getYOfCellCenter(cell, yOffset)+yAnimiate, paintPlayer);			
 	}
 	
 

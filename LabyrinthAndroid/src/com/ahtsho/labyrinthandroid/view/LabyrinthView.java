@@ -17,6 +17,7 @@ import android.os.Build;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.ahtsho.labyrinthandroid.service.BombAnimationService;
 import com.ahtsho.labyrinthandroid.service.GameService;
 import com.ahtsho.labyrinthandroid.service.HandAnimationService;
 import com.ahtsho.labyrinthandroid.service.MetricsService;
@@ -43,6 +44,7 @@ public class LabyrinthView extends View {
 	private ArrayList<Cell> path = null;
 	private int pathCurrCellIdx = 0;
 	private boolean tutorialFinished = false;
+	private boolean showEffects = false;
 	
 //	private static boolean animateHand = true;
 	
@@ -82,6 +84,10 @@ public class LabyrinthView extends View {
 					
 				}
 			}
+			if(Player.sufferedExplosion){
+				showExplosion();
+			}
+			
 		}
 		
 		if(GameService.isTutorial() && pathCurrCellIdx < path.size()){
@@ -125,7 +131,15 @@ public class LabyrinthView extends View {
 			HandAnimationService.reset();
 		}
 	}
-	
+	private void showExplosion() {
+		showEffects = true;
+		BombAnimationService.explode();
+		if(BombAnimationService.animationEnded(BombAnimationService.Type.EXPLOSION)) {
+			BombAnimationService.reset(BombAnimationService.Type.EXPLOSION);
+			Player.sufferedExplosion=false;
+			showEffects = false;
+		}		
+	}
 	private void transitToNextLevelWithAnimation() {
 		PlayerAnimationService.slide(exitDirection);
 		if(PlayerAnimationService.animationEnded(PlayerAnimationService.Type.SLIDE)) {
@@ -157,8 +171,15 @@ public class LabyrinthView extends View {
 		} else {
 			BitmapPainter.drawCell(canvas, cell, xOffset, yOffset, zoom);
 			BitmapPainter.drawCreatures(canvas, cell, player, xOffset, yOffset,
-					PlayerAnimationService.xAnimiate, PlayerAnimationService.yAnimiate,PlayerAnimationService.zoom);
-			BitmapPainter.drawTools(canvas, cell, player, xOffset, yOffset);
+					PlayerAnimationService.xAnimiate, PlayerAnimationService.yAnimiate,PlayerAnimationService.zoom);			
+			BitmapPainter.drawTools(canvas, cell, player, xOffset, yOffset,ToolAnimationService.xAnimiate,ToolAnimationService.yAnimiate,ToolAnimationService.zoom);
+			
+			if(showEffects){
+				BitmapPainter.drawExplosion(canvas, player.getPosition(), player, 
+						MetricsService.getStartingX(), MetricsService.getStartingY(),
+						BombAnimationService.xAnimiate,BombAnimationService.yAnimiate, BombAnimationService.zoom);
+			}
+
 		}
 	}
 
@@ -197,6 +218,10 @@ public class LabyrinthView extends View {
 						if(Player.fell){
 							new SoundSource(labyrinth.getPlayer(), SoundSource.FALL, mainActivity);
 							PlayerAnimationService.startAnimation();
+						}
+						if(Player.sufferedExplosion){
+							BombAnimationService.startAnimation();
+							new SoundSource(labyrinth.getPlayer(),SoundSource.EXPLOSION,mainActivity);
 						}
 							
 					}

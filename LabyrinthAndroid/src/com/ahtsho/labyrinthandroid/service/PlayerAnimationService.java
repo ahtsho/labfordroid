@@ -53,7 +53,6 @@ public class PlayerAnimationService extends AnimationService {
 				zoom+=MetricsService.ZOOM_FACTOR;
 			} else if (direction == OUT) {
 				zoom-=MetricsService.ZOOM_FACTOR;
-				System.out.println(zoom);
 			}
 		}
 	}

@@ -16,10 +16,12 @@ public class SoundSource implements Performer {
 	public static final int EXIT = 5;
 	public static final int BUMP = 6;
 	public static final int FALL = 7;
+	public static final int EXPLOSION = 8;
 	
 	public final static int SYSTEM_STATUS_GAME_OVER = 10;
 	public final static int SYSTEM_STATUS_END_GAME = 11;
 	public final static int SYSTEM_STATUS_RESTART_GAME = 12;
+	
 	
 
 	private static boolean audioOn = true;
@@ -64,6 +66,9 @@ public class SoundSource implements Performer {
 						break;
 					case FALL:
 						mediaPlayer = MediaPlayer.create(activity.getApplicationContext(),R.raw.falling);
+						break;
+					case EXPLOSION:
+						mediaPlayer = MediaPlayer.create(activity.getApplicationContext(),R.raw.explosion);
 						break;
 					default:
 						break;
@@ -152,6 +157,7 @@ public class SoundSource implements Performer {
 						mediaPlayer = MediaPlayer.create(
 								activity.getApplicationContext(),
 								R.raw.cracking_up);
+					
 						break;
 					default:
 						break;

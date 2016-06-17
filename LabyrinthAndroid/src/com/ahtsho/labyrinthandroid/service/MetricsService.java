@@ -22,7 +22,9 @@ public class MetricsService {
 	public static float LEFT_MARGIN_TOOL = 60;
 	public static float TOP_MARGIN_TOOL = 50;
 	public static final double ZOOM_FACTOR = 0.1;
-	public static final float PLAYER_MAX_ZOOM = 200;
+	public static final float PLAYER_MAX_ZOOM = 50;
+	public static final float EXPLOSTION_ANIMATION_MAX_VALUE = 300;
+	public static final float EXPLOSION_SPEED = 1;
 	
 	public static float xOffset = 0;
 	public static float yOffset = 0;

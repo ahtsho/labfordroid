@@ -64,22 +64,35 @@ public class Bitmapper {
 		return creatureBitmap;
 	}
 
-	public static Bitmap getBitmap(Tool t, View v) {
-		Bitmap creatureBitmap = null;
+	public static Bitmap getBitmap(Tool t, View v, boolean showEffect) {
+		Bitmap toolBitmap = null;
 		if(t instanceof Plaster){
-			creatureBitmap=BitmapFactory.decodeResource(v.getResources(),R.drawable.plaster1);
+			toolBitmap=BitmapFactory.decodeResource(v.getResources(),R.drawable.plaster1);
 		}else if(t instanceof Medicine){
-			creatureBitmap=BitmapFactory.decodeResource(v.getResources(),R.drawable.medicine);
+			toolBitmap=BitmapFactory.decodeResource(v.getResources(),R.drawable.medicine);
 		}else if(t instanceof Box){
-			creatureBitmap=BitmapFactory.decodeResource(v.getResources(),R.drawable.closed_box1);
+			Box box = (Box) t;
+			if(box.getStatus().equals(Box.Status.CLOSED)){
+				toolBitmap=BitmapFactory.decodeResource(v.getResources(),R.drawable.closed_box1);
+			} else if((box.getStatus().equals(Box.Status.OPEN))){
+				if(box.getContained() instanceof Heart) {
+					toolBitmap=BitmapFactory.decodeResource(v.getResources(),R.drawable.open_box);
+				} else if(box.getContained() instanceof Bomb) {
+					toolBitmap=BitmapFactory.decodeResource(v.getResources(),R.drawable.open_box);
+				}
+			}
 		}else if(t instanceof Bomb){
-			creatureBitmap=BitmapFactory.decodeResource(v.getResources(),R.drawable.bomb1);
+			if(showEffect){
+				toolBitmap=BitmapFactory.decodeResource(v.getResources(),R.drawable.explosion_small);
+			} else {
+				toolBitmap=BitmapFactory.decodeResource(v.getResources(),R.drawable.bomb1);
+			}
 		}else if(t instanceof Heart){
-			creatureBitmap=BitmapFactory.decodeResource(v.getResources(),R.drawable.heart);
+			toolBitmap=BitmapFactory.decodeResource(v.getResources(),R.drawable.heart);
 		}else if(t instanceof Hole){
-			creatureBitmap=BitmapFactory.decodeResource(v.getResources(),R.drawable.hole);
+			toolBitmap=BitmapFactory.decodeResource(v.getResources(),R.drawable.hole);
 		}
-		return creatureBitmap;
+		return toolBitmap;
 	}
 	private static Bitmap westWall = null;
 	private static Bitmap eastWall = null;
